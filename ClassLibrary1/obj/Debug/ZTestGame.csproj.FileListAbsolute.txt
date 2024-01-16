@@ -1,0 +1,36 @@
+C:\Users\Xizuk\source\repos\ClassLibrary1\bin\Debug\ClassLibrary1.dll
+C:\Users\Xizuk\source\repos\ClassLibrary1\bin\Debug\ClassLibrary1.pdb
+C:\Users\Xizuk\source\repos\ClassLibrary1\bin\Debug\Nyp.Razor.dll
+C:\Users\Xizuk\source\repos\ClassLibrary1\bin\Debug\Tao.OpenAl.dll
+C:\Users\Xizuk\source\repos\ClassLibrary1\obj\Debug\ZTestGame.csproj.AssemblyReference.cache
+C:\Users\Xizuk\source\repos\ClassLibrary1\obj\Debug\ZTestGame.csproj.CoreCompileInputs.cache
+C:\Users\Xizuk\source\repos\ClassLibrary1\obj\Debug\ZTestGame.csproj.CopyComplete
+C:\Users\Xizuk\source\repos\ClassLibrary1\obj\Debug\ClassLibrary1.dll
+C:\Users\Xizuk\source\repos\ClassLibrary1\obj\Debug\ClassLibrary1.pdb
+C:\Users\Xizuk\OneDrive\Documents\GitHub\TP_MP\TP_MP\Builds\External Apps\ClassLibrary1\bin\Debug\ClassLibrary1.dll
+C:\Users\Xizuk\OneDrive\Documents\GitHub\TP_MP\TP_MP\Builds\External Apps\ClassLibrary1\bin\Debug\ClassLibrary1.pdb
+C:\Users\Xizuk\OneDrive\Documents\GitHub\TP_MP\TP_MP\Builds\External Apps\ClassLibrary1\obj\Debug\ZTestGame.csproj.AssemblyReference.cache
+C:\Users\Xizuk\OneDrive\Documents\GitHub\TP_MP\TP_MP\Builds\External Apps\ClassLibrary1\obj\Debug\ZTestGame.csproj.CoreCompileInputs.cache
+C:\Users\Xizuk\OneDrive\Documents\GitHub\TP_MP\TP_MP\Builds\External Apps\ClassLibrary1\obj\Debug\ZTestGame.csproj.CopyComplete
+C:\Users\Xizuk\OneDrive\Documents\GitHub\TP_MP\TP_MP\Builds\External Apps\ClassLibrary1\obj\Debug\ClassLibrary1.dll
+C:\Users\Xizuk\OneDrive\Documents\GitHub\TP_MP\TP_MP\Builds\External Apps\ClassLibrary1\obj\Debug\ClassLibrary1.pdb
+C:\Users\Xizuk\OneDrive\Documents\GitHub\TP_MP\TP_MP\Builds\External Apps\ClassLibrary1\obj\Debug\BTGame.TestGame.resources
+C:\Users\Xizuk\OneDrive\Documents\GitHub\TP_MP\TP_MP\Builds\External Apps\ClassLibrary1\obj\Debug\ZTestGame.csproj.GenerateResource.cache
+C:\Users\Xizuk\OneDrive\Desktop\New folder\ClassLibrary1\bin\Debug\ClassLibrary1.dll
+C:\Users\Xizuk\OneDrive\Desktop\New folder\ClassLibrary1\bin\Debug\ClassLibrary1.pdb
+C:\Users\Xizuk\OneDrive\Desktop\New folder\ClassLibrary1\obj\Debug\ZTestGame.csproj.AssemblyReference.cache
+C:\Users\Xizuk\OneDrive\Desktop\New folder\ClassLibrary1\obj\Debug\BTGame.TestGame.resources
+C:\Users\Xizuk\OneDrive\Desktop\New folder\ClassLibrary1\obj\Debug\ZTestGame.csproj.GenerateResource.cache
+C:\Users\Xizuk\OneDrive\Desktop\New folder\ClassLibrary1\obj\Debug\ZTestGame.csproj.CoreCompileInputs.cache
+C:\Users\Xizuk\OneDrive\Desktop\New folder\ClassLibrary1\obj\Debug\ZTestGame.csproj.CopyComplete
+C:\Users\Xizuk\OneDrive\Desktop\New folder\ClassLibrary1\obj\Debug\ClassLibrary1.dll
+C:\Users\Xizuk\OneDrive\Desktop\New folder\ClassLibrary1\obj\Debug\ClassLibrary1.pdb
+C:\Users\Xizuk\Documents\GitHub\TP_MP\ClassLibrary1\obj\Debug\ZTestGame.csproj.AssemblyReference.cache
+C:\Users\Xizuk\Documents\GitHub\TP_MP\ClassLibrary1\obj\Debug\BTGame.ShibaToTheTop.resources
+C:\Users\Xizuk\Documents\GitHub\TP_MP\ClassLibrary1\obj\Debug\ZTestGame.csproj.GenerateResource.cache
+C:\Users\Xizuk\Documents\GitHub\TP_MP\ClassLibrary1\obj\Debug\ZTestGame.csproj.CoreCompileInputs.cache
+C:\Users\Xizuk\Documents\GitHub\TP_MP\ClassLibrary1\obj\Debug\ZTestGame.csproj.CopyComplete
+C:\Users\Xizuk\Documents\GitHub\TP_MP\ClassLibrary1\bin\Debug\ShibaToTheTop.dll
+C:\Users\Xizuk\Documents\GitHub\TP_MP\ClassLibrary1\bin\Debug\ShibaToTheTop.pdb
+C:\Users\Xizuk\Documents\GitHub\TP_MP\ClassLibrary1\obj\Debug\ShibaToTheTop.dll
+C:\Users\Xizuk\Documents\GitHub\TP_MP\ClassLibrary1\obj\Debug\ShibaToTheTop.pdb

@@ -1,0 +1,16 @@
+C:\Users\Xizuk\Documents\GitHub\TP_MP\ClassLibrary1\bin\Release\ShibaToTheTop.dll
+C:\Users\Xizuk\Documents\GitHub\TP_MP\ClassLibrary1\bin\Release\ShibaToTheTop.pdb
+C:\Users\Xizuk\Documents\GitHub\TP_MP\ClassLibrary1\obj\Release\ZTestGame.csproj.AssemblyReference.cache
+C:\Users\Xizuk\Documents\GitHub\TP_MP\ClassLibrary1\obj\Release\BTGame.ShibaToTheTop.resources
+C:\Users\Xizuk\Documents\GitHub\TP_MP\ClassLibrary1\obj\Release\ZTestGame.csproj.GenerateResource.cache
+C:\Users\Xizuk\Documents\GitHub\TP_MP\ClassLibrary1\obj\Release\ZTestGame.csproj.CoreCompileInputs.cache
+C:\Users\Xizuk\Documents\GitHub\TP_MP\ClassLibrary1\obj\Release\ShibaToTheTop.dll
+C:\Users\Xizuk\Documents\GitHub\TP_MP\ClassLibrary1\obj\Release\ShibaToTheTop.pdb
+C:\Users\Xizuk\Documents\GitHub\SpectrumLearning_DrivingCar\ClassLibrary1\bin\Release\Driving.dll
+C:\Users\Xizuk\Documents\GitHub\SpectrumLearning_DrivingCar\ClassLibrary1\bin\Release\Driving.pdb
+C:\Users\Xizuk\Documents\GitHub\SpectrumLearning_DrivingCar\ClassLibrary1\obj\Release\ZTestGame.csproj.AssemblyReference.cache
+C:\Users\Xizuk\Documents\GitHub\SpectrumLearning_DrivingCar\ClassLibrary1\obj\Release\ZTestGame.csproj.GenerateResource.cache
+C:\Users\Xizuk\Documents\GitHub\SpectrumLearning_DrivingCar\ClassLibrary1\obj\Release\ZTestGame.csproj.CoreCompileInputs.cache
+C:\Users\Xizuk\Documents\GitHub\SpectrumLearning_DrivingCar\ClassLibrary1\obj\Release\Driving.dll
+C:\Users\Xizuk\Documents\GitHub\SpectrumLearning_DrivingCar\ClassLibrary1\obj\Release\Driving.pdb
+C:\Users\Xizuk\Documents\GitHub\SpectrumLearning_DrivingCar\ClassLibrary1\obj\Release\JsonData.resources
