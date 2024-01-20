@@ -23,19 +23,23 @@ public class GameManager : MonoBehaviour
     public int currentSession;
     public float highestScoreOfSession;
     public List<float> scores = new List<float>();
-
+    public float scoreScale;
 
     public CarScript carScript;
     private Vector3 camPivotOriginalPos;
+
+    public float obstacleDestroyDistance;
 
     // Start is called before the first frame update
     void Start()
     {
         XizukiMethods.GameObjects.Xi_Helper_GameObjects.MonoInitialization<GameManager>(ref instance, this);
         uiManager = XizukiMethods.GameObjects.Xi_Helper_GameObjects.ConditionalAssignment<UIManager>(GetComponent<UIManager>());
-        carUpgradesManager = XizukiMethods.GameObjects.Xi_Helper_GameObjects.ConditionalAssignment<CarUpgradesManager>(GetComponent<CarUpgradesManager>());
+        carUpgradesManager = XizukiMethods.GameObjects.Xi_Helper_GameObjects.ConditionalAssignment<CarUpgradesManager>(GameObject.FindGameObjectWithTag("Player").GetComponent<CarUpgradesManager>());
         carScript = GameObject.FindObjectOfType<CarScript>();
         camPivotOriginalPos = CameraPivot.transform.localEulerAngles;
+
+
     }
 
     // Update is called once per frame
@@ -48,9 +52,27 @@ public class GameManager : MonoBehaviour
 
     public void Scoring()
     {
-        scores[currentSession] += carScript.speed * Time.deltaTime;
-        carUpgradesManager.UpgradeScoring(carScript.speed * Time.deltaTime);
+        scores[currentSession] += carScript.speed * Time.deltaTime * scoreScale;
+        carUpgradesManager.UpgradeScoring(carScript.speed * Time.deltaTime * scoreScale);
     }
+
+    [ContextMenu("RemoveObstaclesNearPlayer")]
+    public void RemoveObstaclesNearPlayer()
+    {
+        Vector3 playerPosition = GameObject.FindGameObjectWithTag("Player").transform.position;
+
+        GameObject[] GOs = GameObject.FindGameObjectsWithTag("Obstacle");
+
+        XizukiMethods.GameObjects.Xi_Helper_GameObjects.FilterOutWithScript<GameObject>(ref GOs, CheckPosition);
+        
+
+        void CheckPosition(GameObject GO)
+        {
+            if ((GO.transform.position - playerPosition).magnitude < obstacleDestroyDistance) Destroy(GO);
+        }
+    }
+
+
 
     public void UIUpdate()
     {

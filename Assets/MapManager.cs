@@ -202,6 +202,9 @@ public class MapManager : MonoBehaviour
     void Start()
     {
         car.splineAnimate.Container = roadSplineContainer;
+
+        roadSplineContainer.gameObject.GetComponent<SplineInstantiate>().Randomize();
+        GameManager.instance.RemoveObstaclesNearPlayer();
     }
 
     public void Awake()
@@ -261,13 +264,12 @@ public class MapManager : MonoBehaviour
             GenerateGroundTerrain_PerlinNoise();
 
 
-        if(ran < 2)
-            roadSplineContainer.gameObject.GetComponent<SplineInstantiate>().Randomize();
-        //roadSplineContainer.gameObject.GetComponent<SplineInstantiate>().SetDirty();
+        //if(ran < 2)
+        //    roadSplineContainer.gameObject.GetComponent<SplineInstantiate>().Randomize();
+        //else
+        //    GameManager.instance.RemoveObstaclesNearPlayer();
 
-        ran += 1;
-
-        //roadSplineContainer.gameObject.GetComponent<SplineInstantiate>().UpdateInstances();
+        ran++;
     }
 
     public int[] entrancePosition;

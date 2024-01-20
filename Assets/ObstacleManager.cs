@@ -17,6 +17,7 @@ public class ObstacleManager : MonoBehaviour
 
     public List<float> obstaclesSpawnPercentage;
 
+    public Vector3 minPositionalOffset;
     public Vector3 maxPositionalOffset;
 
     public SplineInstantiate splineInstantiate;
@@ -39,13 +40,19 @@ public class ObstacleManager : MonoBehaviour
     {
 
     }
-
-    public void GenerateObstacles()
+    [ContextMenu("GenerateObstacles")]
+    public void GenerateObstaclesContextMenu()
     {
+        GenerateObstacles(4);
+    }
+    public void GenerateObstacles(int difficulty)
+    {
+        splineInstantiate.MinPositionOffset = minPositionalOffset;
+
         splineInstantiate.MaxPositionOffset = maxPositionalOffset;
 
-        splineInstantiate.MinSpacing = minMaxSpacingDifficultySettings[0].x;
-        splineInstantiate.MaxSpacing = minMaxSpacingDifficultySettings[0].y;
+        splineInstantiate.MinSpacing = minMaxSpacingDifficultySettings[difficulty].x;
+        splineInstantiate.MaxSpacing = minMaxSpacingDifficultySettings[difficulty].y;
 
         // splineInstantiate.positionSpace = new SplineInstantiate.OffsetSpace();
 

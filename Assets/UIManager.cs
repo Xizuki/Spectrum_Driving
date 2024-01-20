@@ -44,9 +44,14 @@ public class UIManager : MonoBehaviour
     {
         pauseCanvas.SetActive(state);
         if (state)
+        {
             Time.timeScale = 0;
+        }
         else
+        {
+            OptionsManager.instance.UnPausedDifficulty();
             Time.timeScale = 1;
+        }
     }
 
     public void IntervalStart()

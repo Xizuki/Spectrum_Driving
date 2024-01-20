@@ -102,6 +102,47 @@ namespace XizukiMethods
             }
 
 
+
+            /// <summary>
+            /// Takes a reference array of GameObjects and Filter out a specific MonoBehaviour into another Array, 
+            /// leaving the original array without the new array
+            /// </summary>
+            /// <typeparam name="T"> The MonoBehaviour Type to filter out </typeparam>
+            /// <param name="GOs"> The Referenced GameObject Array to filter Classes out of </param>
+            /// <returns></returns>
+            public static T[] FilterOutWithScript<T>(ref GameObject[] GOs, FilterOutWithScriptDelegate delegateScript)
+            {
+                // Filter Out Gameobjects that doesnt have component <T>
+                // and return an array of component <T>
+
+                List<int> falseIndexes = new List<int>();
+                T[] scripts = new T[GOs.Length];
+                List<int> trueIndexes = new List<int>();
+
+                for (int i = 0; i < GOs.Length; i++)
+                {
+                    if (GOs[i].GetComponent<T>() == null)
+                    {
+                        falseIndexes.Add(i);
+                    }
+                    else
+                    {
+                        delegateScript.Invoke(GOs[i]);
+                        scripts[i] = GOs[i].GetComponent<T>();
+                        trueIndexes.Add(i);
+                    }
+                }
+
+
+                scripts = XizukiMethods.Array.Xi_Array.Remove(scripts, falseIndexes);
+
+                GOs = XizukiMethods.Array.Xi_Array.Remove(GOs, trueIndexes);
+                return scripts;
+            }
+
+            public delegate void FilterOutWithScriptDelegate(GameObject GO);
+
+
         }
     }
 }

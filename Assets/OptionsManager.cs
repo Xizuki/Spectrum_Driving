@@ -6,19 +6,24 @@ using UnityEngine.UI;
 
 public class OptionsManager : MonoBehaviour
 {
+    public static OptionsManager instance;
+
     public float soundVolume;
     public float musicVolume;
     public int difficulty;
+    private int prevDifficulty;
+
+    public float obstacleDestroyDistance;
     // Start is called before the first frame update
     void Start()
     {
-        
+        XizukiMethods.GameObjects.Xi_Helper_GameObjects.MonoInitialization<OptionsManager>(ref instance, this);
     }
 
     // Update is called once per frame
     void Update()
     {
-        
+
     }
 
     public void SoundSlider(Slider slider)
@@ -30,10 +35,23 @@ public class OptionsManager : MonoBehaviour
         musicVolume = slider.value;
     }
 
-    public void ChangeDifficulty(int value)
+    public void ChangeDifficulty(Slider slider)
     {
-        difficulty = value;
+        difficulty = (int)slider.value;
     }
+
+    public void UnPausedDifficulty()
+    {
+        if (prevDifficulty == difficulty) return;
+
+        ObstacleManager.instance.GenerateObstacles(difficulty);
+
+        prevDifficulty = difficulty;
+
+        GameManager.instance.RemoveObstaclesNearPlayer();
+    }
+
+ 
 
     public void ExitGame()
     {

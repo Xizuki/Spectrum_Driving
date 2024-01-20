@@ -7,13 +7,17 @@ TagManager:
   - Road
   - score_txt
   - Obstacle
+  - Car
+  - Test1
+  - Test2
   layers:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - 
+  - Player
   - Water
   - UI
+  - Obstacle
   - 
   - 
   - 
@@ -29,13 +33,12 @@ TagManager:
   - 
   - 
   - 
+  - Test1
+  - Test2
   - 
   - 
   - 
-  - 
-  - 
-  - 
-  - 
+  - ObstacleSeeThrough
   - 
   - 
   - 

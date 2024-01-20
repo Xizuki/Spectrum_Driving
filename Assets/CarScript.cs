@@ -28,8 +28,21 @@ public class CarScript : MonoBehaviour
         namedPipeServer = GameObject.FindObjectOfType<NamedPipeServer>();   
     }
 
+
+    public bool justHit;
     public void EEGRateCalculation()
     {
+        if (justHit)
+        {
+            if (eegRate > 0 + (1 / timeToMaxSpeed * Time.deltaTime * 3))
+                eegRate -= 1 / timeToMaxSpeed * Time.deltaTime * 3;
+            else
+                eegRate = 0;
+
+
+            return;
+        }
+
         if (GameManager.instance.state == GameState.Interval)
         {
             if (eegRate > 0 + (1 / timeToMaxSpeed * Time.deltaTime))
@@ -147,6 +160,9 @@ public class CarScript : MonoBehaviour
 
 
 
+
+
+
     public float tiltAngleLimit;
     public float timeToTiltBackToDefault;
     public float timeToTilt;
@@ -157,7 +173,57 @@ public class CarScript : MonoBehaviour
     {
         if (other.tag != "Obstacle") return;
 
+        print("TRIGGER ENTER Obstacle");
 
+        Vector3 randomForce = new Vector3(UnityEngine.Random.Range(-0.15f,0.15f),
+                                            -1,
+                                            UnityEngine.Random.Range(-0.15f, 0.15f));
+
+        other.gameObject.GetComponent<Rigidbody>().AddExplosionForce(10000f, randomForce, 10f);
+
+        GetHit();
+    }
+
+    public MeshRenderer meshRenderer;
+    public Material baseMat;
+    public Material hitMat;
+
+    public Color baseColor;
+    public Color hitColor;
+    public Color recoveryColor;
+
+    public int hitTimeTicks;
+    public float hitTime;
+
+    public void GetHit()
+    {       
+        StartCoroutine(HitVFX());
+    }
+
+    IEnumerator HitVFX()
+    {
+        justHit = true;
+        float perTickTime = hitTime / (float)hitTimeTicks;
+        int tickCounter = 0;
+
+        hitMat.color = hitColor;
+
+        yield return new WaitForSeconds(perTickTime / 2);
+
+        hitMat.color = baseColor;
+        tickCounter++;
+
+        while (tickCounter < hitTimeTicks)
+        {
+            yield return new WaitForSeconds(perTickTime/2);
+            hitMat.color = recoveryColor;
+
+            yield return new WaitForSeconds(perTickTime/2);
+            hitMat.color = baseColor;
+            tickCounter++;
+        }
+
+        justHit = false;
     }
 }
 
