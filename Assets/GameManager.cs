@@ -133,7 +133,7 @@ public class GameManager : MonoBehaviour
 
     public void ProgressBarUI()
     {
-        print("ProgressBarUI");
+        //print("ProgressBarUI");
 
         highestScoreOfSession = scores.Max();
 

@@ -58,10 +58,10 @@ public class TerrainTestScript : MonoBehaviour
         // Get all of layer zero.
         var map = t.terrainData.GetDetailLayer(0, 0, t.terrainData.detailWidth, t.terrainData.detailHeight, 0);
 
-        print("terrainData.terrainLayers).Count = " + t.terrainData.terrainLayers.Count());
-        //print(t.terrainData.terrainLayers[0].);
-        print("map[0, 0] = " + map[0, 0]);
-        print("map[513, 0] = " + map[513, 0]);
+        //print("terrainData.terrainLayers).Count = " + t.terrainData.terrainLayers.Count());
+        ////print(t.terrainData.terrainLayers[0].);
+        //print("map[0, 0] = " + map[0, 0]);
+        //print("map[513, 0] = " + map[513, 0]);
 
 
         // For each pixel in the detail map...
@@ -89,7 +89,7 @@ public class TerrainTestScript : MonoBehaviour
         int alphaMapResolution = terrainData.alphamapResolution;
         float[,,] alphaMap = new float[alphaMapResolution, alphaMapResolution, terrainData.terrainLayers.Length];
 
-        print(alphaMap.GetLength(0));
+        //print(alphaMap.GetLength(0));
 
         // Iterate through each point on the alpha map
         for (int x = 0; x < alphaMapResolution; x++)
@@ -113,12 +113,12 @@ public class TerrainTestScript : MonoBehaviour
     {
         TerrainData terrainData = terrain.terrainData;
 
-        print("terrainData.terrainLayers).Count = " + terrainData.terrainLayers.Count());
+        //print("terrainData.terrainLayers).Count = " + terrainData.terrainLayers.Count());
 
         //terrainData.terrainLayers[0].
 
-        //print("terrainData.GetDetailLayer(0, 0, 0, 0, 0)[0,0]).Count = " + terrainData.GetDetailLayer(0, 0, 0, 0, 0)[0,0]);
-        print("terrainData.GetDetailLayer(0, 0, 0, 0, 0)[1,1]).Count = " + terrainData.GetDetailLayer(0, 0, 0, 0, 0)[1,1]);
+        ////print("terrainData.GetDetailLayer(0, 0, 0, 0, 0)[0,0]).Count = " + terrainData.GetDetailLayer(0, 0, 0, 0, 0)[0,0]);
+        //print("terrainData.GetDetailLayer(0, 0, 0, 0, 0)[1,1]).Count = " + terrainData.GetDetailLayer(0, 0, 0, 0, 0)[1,1]);
 
         terrainData.SetDetailLayer(0, 0, 0, new int[0, 0]);
         //terrainData.GetDetailLayer();
@@ -145,7 +145,7 @@ public class TerrainTestScript : MonoBehaviour
         //        // Ensure we're within bounds
         //        if (!(i >= 0 && i < heightmapWidth && j >= 0 && j < heightmapHeight))
         //        {
-        //            print("OOB i = " + i + ", j = " + j);
+        //            //print("OOB i = " + i + ", j = " + j);
         //            continue;
         //        }
         //        // Modify the height (you can adjust this value)

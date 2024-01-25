@@ -53,7 +53,7 @@ public class ComputeShaderTester : MonoBehaviour
 
         stopwatch.Stop();
 
-        print("Elapsed Time = " + stopwatch.Elapsed);
+        //print("Elapsed Time = " + stopwatch.Elapsed);
     }
 
 
@@ -93,7 +93,7 @@ public class ComputeShaderTester : MonoBehaviour
 
         stopwatch.Stop();
 
-        print("Elapsed Time = " + stopwatch.Elapsed);
+        //print("Elapsed Time = " + stopwatch.Elapsed);
     }
 
     public void CubesStructInitialization()

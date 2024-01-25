@@ -1,7 +1,7 @@
 using System;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
+using static UnityEditor.Experimental.GraphView.GraphView;
 
 
 [Serializable]
@@ -26,6 +26,12 @@ public class CarUpgradesManager : MonoBehaviour
     [SerializeField]
     public GameObjectArray[] wheels;
 
+    public float transitionTime;
+
+    public GameObject maskQuad;
+    public GameObject maskQuadEndPos;
+    public ParticleSystem carUpgradeVFX;
+
     public void ChangeCar()
     {
 
@@ -44,14 +50,59 @@ public class CarUpgradesManager : MonoBehaviour
     public void CarUpgrade()
     {
         audioSource.PlayOneShot(upgradeSound);
+        carUpgradeVFX.Play();
+
+        //StartCoroutine(CarUpgradeVFX());
 
         cars[currentCarIndex].SetActive(false);
-
         currentCarIndex++;
-
         cars[currentCarIndex].SetActive(true);
 
         carScript.carFeedbackScript.wheels = wheels[currentCarIndex].gameobjects;
+    }
+
+    IEnumerator CarUpgradeVFX()
+    {
+        float timer = 0;
+
+        Vector3 originalPos = maskQuad.transform.localPosition;
+
+        maskQuad.SetActive(true);
+        cars[currentCarIndex+1].SetActive(true);
+
+
+        cars[currentCarIndex].layer = 23;
+        foreach (Transform go in cars[currentCarIndex].GetComponentsInChildren<Transform>()) 
+        {
+            go.gameObject.layer = 23;
+        }
+
+        cars[currentCarIndex + 1].layer = 24;
+        foreach (Transform go in cars[currentCarIndex + 1].GetComponentsInChildren<Transform>())
+        {
+            go.gameObject.layer = 24;
+        }
+
+        while (timer < transitionTime)
+        {
+            maskQuad.transform.localPosition = Vector3.Lerp(originalPos, maskQuadEndPos.transform.localPosition, timer / transitionTime);
+
+            yield return new WaitForFixedUpdate();
+            timer += Time.deltaTime;
+        }
+
+        cars[currentCarIndex].SetActive(false);
+        maskQuad.SetActive(false);
+
+        currentCarIndex++;
+
+        maskQuad.transform.localPosition = originalPos;
+
+        cars[currentCarIndex].layer = 0;
+        foreach (Transform go in cars[currentCarIndex].GetComponentsInChildren<Transform>())
+        {
+            go.gameObject.layer = 0;
+        }
     }
 
     // Start is called before the first frame update

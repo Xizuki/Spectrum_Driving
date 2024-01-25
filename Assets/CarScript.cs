@@ -173,7 +173,7 @@ public class CarScript : MonoBehaviour
     {
         if (other.tag != "Obstacle") return;
 
-        print("TRIGGER ENTER Obstacle");
+        //print("TRIGGER ENTER Obstacle");
 
         Vector3 randomForce = new Vector3(UnityEngine.Random.Range(-0.15f,0.15f),
                                             -1,

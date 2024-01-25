@@ -180,7 +180,7 @@ public class NamedPipeServer : MonoBehaviour
             Debug.Log("The pipe stream is broken.");
         }
 
-        print("OnClientConnected()");
+        //print("OnClientConnected()");
     }
 
 
@@ -203,8 +203,8 @@ public class NamedPipeServer : MonoBehaviour
         {
             json = JObject.Parse(lastestLine);
 
-            print(json["Keys"]);
-            print(json["Keys"]["Left"]);
+            //print(json["Keys"]);
+            //print(json["Keys"]["Left"]);
         }
         catch
         {
@@ -216,7 +216,7 @@ public class NamedPipeServer : MonoBehaviour
         {
             if (pipeValues[i].valueType == pipeValueType.Keyboard)
             {
-                print("2 " + json["Keys"][pipeValues[i].valueName].ToString());
+                //print("2 " + json["Keys"][pipeValues[i].valueName].ToString());
 
                 pipeValues[i].value = json["Keys"][pipeValues[i].valueName].ToString();
 

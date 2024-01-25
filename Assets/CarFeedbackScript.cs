@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Experimental.GlobalIllumination;
 using UnityEngine.Splines.Interpolators;
 using UnityEngine.UI;
 using UnityEngine.VFX;
@@ -13,6 +14,7 @@ public class CarFeedbackScript : MonoBehaviour
     public ParticleSystem[] windVFXs;
 
     public AudioSource musicSource;
+    public AudioSource soundSource;
     public float musicBaseValue;
 
     public Image speedLines;
@@ -36,6 +38,7 @@ public class CarFeedbackScript : MonoBehaviour
     [Header("Lights VFX Values")]
     public Light[] frontLights;
     public Light backLight;
+    public Light spotLight;
 
     public float frontLightsLowestRatio;
     public float backLightsLowestRatio;
@@ -51,6 +54,8 @@ public class CarFeedbackScript : MonoBehaviour
 
     [Header("Car Tracks VFX Values")]
     public VisualEffect[] carTracks;
+
+
 
 
 
@@ -86,6 +91,9 @@ public class CarFeedbackScript : MonoBehaviour
     }
 
 
+    public float spotLightIntesityMin;
+    public float spotLightIntesityMax;
+
     public void LightFeedBack(float eegValue)
     {
         for(int i = 0; i < frontLights.Length; i++) 
@@ -93,6 +101,7 @@ public class CarFeedbackScript : MonoBehaviour
             frontLights[i].intensity = Mathf.Lerp( frontLightsIntensityMin, frontLightsIntensityMax,eegValue);
             frontLights[i].range = Mathf.Lerp(frontLightsRangeMin, frontLightsRangeMax, eegValue);
 
+            spotLight.intensity = Mathf.Lerp(spotLightIntesityMin, spotLightIntesityMax, eegValue);
 
             backLight.intensity = Mathf.Lerp(backLightsIntensityMax, backLightsIntensityMin, eegValue);
             backLight.range = Mathf.Lerp(backLightsRangeMax, backLightsRangeMin, eegValue);
@@ -102,6 +111,7 @@ public class CarFeedbackScript : MonoBehaviour
     public void Music(float eegValue)
     {
         musicSource.volume = musicBaseValue + ((1 - musicBaseValue)* eegValue);
+        soundSource.volume = musicBaseValue + ((1 - musicBaseValue) * eegValue);
     }
 
     public void SmokeVFX(float eegRate)

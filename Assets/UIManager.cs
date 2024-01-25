@@ -29,7 +29,7 @@ public class UIManager : MonoBehaviour
     {
         XizukiMethods.GameObjects.Xi_Helper_GameObjects.MonoInitialization<UIManager>(ref Instance, this);
 
-        print("Instance = " + Instance);
+        //print("Instance = " + Instance);
 
         GameObject.FindGameObjectWithTag("score_txt").GetComponent<TMP_Text>();    
     }
