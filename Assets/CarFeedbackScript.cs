@@ -51,6 +51,8 @@ public class CarFeedbackScript : MonoBehaviour
     private float backLightsIntensityMin;
     private float backLightsRangeMax;
     private float backLightsRangeMin;
+    public float spotLightIntesityMin;
+    public float spotLightIntesityMax;
 
     [Header("Car Tracks VFX Values")]
     public VisualEffect[] carTracks;
@@ -91,8 +93,7 @@ public class CarFeedbackScript : MonoBehaviour
     }
 
 
-    public float spotLightIntesityMin;
-    public float spotLightIntesityMax;
+
 
     public void LightFeedBack(float eegValue)
     {

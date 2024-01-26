@@ -9,6 +9,7 @@ using UnityEngine.Events;
 using System.Collections.Generic;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using TMPro;
 
 public class NamedPipeServer : MonoBehaviour
 {
@@ -25,6 +26,8 @@ public class NamedPipeServer : MonoBehaviour
 
     //[SerializeField]
     //public Channel[] eegChannels;
+
+    public TMP_Text text;
 
     private void Awake()
     {
@@ -48,23 +51,26 @@ public class NamedPipeServer : MonoBehaviour
     private void Start()
     {
         //Application.quitting += HandleApplicationQuit;
-
+        text2.text = testCounter.ToString();
+        testCounter++;
         NamedPipeServer[] namePipeServers = GameObject.FindObjectsByType<NamedPipeServer>(FindObjectsSortMode.None);
 
         foreach (NamedPipeServer namePipeServer in namePipeServers)
         {
             if (namePipeServer != this) { Destroy(namePipeServer.gameObject); Time.timeScale = 1; return; }
         }
-
+        text2.text = testCounter.ToString();
+        testCounter++;
         // Register the Application.quitting event to handle application exit
         //Application.quitting += HandleApplicationQuit;
 
-       
-        
+
+
         if (pipeServer == null)
             StartNamedPipeServer();
 
-
+        text2.text = testCounter.ToString();
+        testCounter++;
 
     }
 
@@ -106,6 +112,8 @@ public class NamedPipeServer : MonoBehaviour
 
     private IEnumerator NamedPipeServerCoroutine()
     {
+        text2.text = testCounter.ToString();
+        testCounter++;
         while (isRunning)
         {
             if (pipeServer == null || !pipeServer.IsConnected)
@@ -134,7 +142,8 @@ public class NamedPipeServer : MonoBehaviour
 
             isRunning = false;
         }
-
+        text2.text = testCounter.ToString();
+        testCounter++;
     }
 
     public void OnApplicationQuit()
@@ -188,6 +197,9 @@ public class NamedPipeServer : MonoBehaviour
 
     public string lastestLine;
     public string test;
+
+    int testCounter;
+    public TMP_Text text2;
     public void ReadMessage()
     {
         if(reader == null) return;
@@ -254,7 +266,7 @@ public class NamedPipeServer : MonoBehaviour
         prevLine = lastestLine;
 
 
-
+        text.text = "isconnected = " + isConnected + "  =  " +  prevLine;
 
 
     }

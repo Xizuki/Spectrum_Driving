@@ -107,7 +107,7 @@ public struct TerrainObject
 public class MapManager : MonoBehaviour
 {
     public static MapManager Instance;
-
+    public bool onUpdate;
     public CarScript car;
 
     [Header("Terrain Variables")]
@@ -234,16 +234,16 @@ public class MapManager : MonoBehaviour
     public int terrainsize;
 
 
-    public bool onUpdate;
 
 
     int ran = 0;
+    float timer = 0;
     public void Update()
     {
-        if (onUpdate)
+        if (onUpdate && timer %4 <= Time.deltaTime)
             GenerateGroundTerrain_PerlinNoise();
 
-
+        timer += Time.deltaTime;
         //if(ran < 2)
         //    roadSplineContainer.gameObject.GetComponent<SplineInstantiate>().Randomize();
         //else
@@ -257,6 +257,16 @@ public class MapManager : MonoBehaviour
 
 
 
+
+    IEnumerator GenerateMapAsync()
+    {
+        yield return StartCoroutine(test());
+    }
+
+    IEnumerator test()
+    {
+        return null;
+    }
 
 
     [ContextMenu("Generate Map")]
@@ -286,11 +296,11 @@ public class MapManager : MonoBehaviour
         ProjectRoadOntoTerrain();
 
 
-        ////GenerateFloraMap();
-        ////GenerateCivilizationNoise();
+        GenerateFloraMap();
+        GenerateCivilizationNoise();
         //////CivilizationHotSpots();
-        ////AddFloraDetailsToTerrain();
-        ////GenerateGrass();
+        AddFloraDetailsToTerrain();
+        GenerateGrass();
         ////AddFloraObjectToTerrain();
         ////GenerateFloraObjects();
 
@@ -307,6 +317,8 @@ public class MapManager : MonoBehaviour
         //GenerateStructures();
         //GenerateClouds();
         //GenerateRain();
+
+
 
 
 
@@ -373,6 +385,10 @@ public class MapManager : MonoBehaviour
     public float roadOverlayScale;
     public Texture2D roadOverlayTexture;
 
+    public Vector3[] splineResolutionPositions;
+
+
+
     public void SetRoadOverlayHeights()
     {
         roadOverlayingHeightsArray = new int[(int)(terrain.terrainData.detailResolution/ roadOverlayScale), (int)(terrain.terrainData.detailResolution / roadOverlayScale)];
@@ -389,7 +405,6 @@ public class MapManager : MonoBehaviour
         referenceRoadSpline = new Spline();
         referenceRoadSpline.Copy(roadSplinePrefabGO.GetComponent<SplineContainer>().Spline);
 
-
         List<BezierKnot> knots = referenceRoadSpline.Knots.ToList();
 
 
@@ -401,11 +416,28 @@ public class MapManager : MonoBehaviour
 
             referenceRoadSpline.SetKnot(i, scaledKnot, BezierTangent.In);
         }
+        //referenceRoadSpline.SetTangentMode(TangentMode.AutoSmooth);
 
         //referenceRoadSpline. = knots;
     }
+
+
+    [ContextMenu("GetCurvature")]
+    public void GetCurvature()
+    {
+        //BezierKnot test = roadSplineContainer.Spline.Evaluate(1,Vector3.zero,Vector3.zero,Vector3.zero);
+        //for (int i = 0; i < roadSplineContainer.Spline.Count; i++)
+        //{
+        //    print(roadSplineContainer.Spline.Evaluate(i / roadSplineContainer.Spline.Count)); ;
+        //}
+    }
+
     public void ProjectRoadOntoTerrain()
     {
+        roadSplineContainer.Spline = new Spline();
+
+        //roadSplineContainer.Spline.SetTangentMode(TangentMode.AutoSmooth);
+
         projectedRoadSpline = new Spline();
 
         roadOverlayingHeightsArray = new int[(int)(terrain.terrainData.detailResolution / roadOverlayScale), (int)(terrain.terrainData.detailResolution / roadOverlayScale)];
@@ -413,17 +445,28 @@ public class MapManager : MonoBehaviour
 
         for (int i = 0; i < roadSplineTerrainProjectionResolution; i++)
         {
-            Vector3 splinePos = referenceRoadSpline.EvaluatePosition(((float)i / roadSplineTerrainProjectionResolution));
+            float3 splinePos = Vector3.zero;
+            float3 splineTanget = Vector3.zero;
+            float3 splineUpVector = Vector3.zero;
+            float splineCurvature = referenceRoadSpline.EvaluateCurvature(((float)i / roadSplineTerrainProjectionResolution));
+
+            referenceRoadSpline.Evaluate(i / roadSplineTerrainProjectionResolution,out splinePos, out splineTanget, out splineUpVector);
 
 
             Vector3 pos = new Vector3(splinePos.x, terrain.SampleHeight(splinePos), splinePos.z);
-            BezierKnot bezierKnot = new BezierKnot(pos);
+            //Vector3 pos = new Vector3(splinePos.x, splinePos.y+(i*3), splinePos.z);
+            BezierKnot bezierKnot = new BezierKnot(pos, Vector3.zero, Vector3.zero, quaternion.Euler(splineUpVector));//, splineTanget, splineTanget, Quaternion.identity);
+            //bezierKnot.Rotation = Quaternion.identity;
+
+            //bezierKnot.Rotation = quaternion.Euler(0, 0, 0);
 
             projectedRoadSpline.Add(bezierKnot);
-            projectedRoadSpline.SetKnot(i, bezierKnot, BezierTangent.In);
+            projectedRoadSpline.SetKnot(i, bezierKnot, BezierTangent.Out);
 
 
             // >>>>>>>> Set roadOverlayingHeightsArray Values as 1 or 0 if its overlaying
+
+            #region Assign Values to Array
 
             float detailToSizeScale = (float)terrain.terrainData.detailResolution / (float)terrain.terrainData.size.x / roadOverlayScale;
 
@@ -464,15 +507,17 @@ public class MapManager : MonoBehaviour
                     roadOverlayingHeightsArray[xValue + 1, yValue + 1] = 1;
             }
 
+            #endregion
+
             //roadSplineContainer.GetComponent<SplineInstantiate>().InstantiateMethod 
         }
 
-
+        //projectedRoadSpline.Knots = ;
 
         roadSplineContainer.Spline = projectedRoadSpline;
         roadSplineContainer.Spline.SetTangentMode(TangentMode.AutoSmooth);
 
-        roadOverlayTexture = ConvertIntArrayToTexture(roadOverlayingHeightsArray);
+        // roadOverlayTexture = ConvertIntArrayToTexture(roadOverlayingHeightsArray);
 
 
 
@@ -1718,7 +1763,6 @@ public class MapManager : MonoBehaviour
             int[,] map = new int[ t.detailWidth, t.detailHeight];
 
 
-
             for (int x = 0; x < t.detailResolution; x++)
             {
                 for (int y = 0; y < t.detailResolution; y++)
@@ -1765,36 +1809,36 @@ public class MapManager : MonoBehaviour
                     //    value += roadOverlayingHeightsArray[y - 1, x - 1];
                     //if (x > 0)
                     //    value += roadOverlayingHeightsArray[y, x - 1];
-                    //if (y < t.detailResolution-1 && x > 0)
+                    //if (y < t.detailResolution - 1 && x > 0)
                     //    value += roadOverlayingHeightsArray[y + 1, x - 1];
 
                     //if (y > 0)
                     //    value += roadOverlayingHeightsArray[y - 1, x];
                     //value += roadOverlayingHeightsArray[y, x];
-                    //if (y < t.detailResolution-1)
+                    //if (y < t.detailResolution - 1)
                     //    value += roadOverlayingHeightsArray[y + 1, x];
 
-                    //if (x < t.detailResolution-1)
+                    //if (x < t.detailResolution - 1)
                     //{
                     //    if (y > 0)
                     //        value += roadOverlayingHeightsArray[y - 1, x + 1];
 
                     //    value += roadOverlayingHeightsArray[y, x + 1];
 
-                    //    if (y < t.detailResolution-1)
+                    //    if (y < t.detailResolution - 1)
                     //        value += roadOverlayingHeightsArray[y + 1, x + 1];
                     //}
 
-                    if (roadOverlayingHeightsArray[(int)(y /roadOverlayScale), (int)(x/roadOverlayScale)] >= 1)
-                        roadOverlap = true;
+                    //if (roadOverlayingHeightsArray[(int)(y /roadOverlayScale), (int)(x/roadOverlayScale)] >= 1)
+                    //    roadOverlap = true;
 
-                    if (roadOverlap)
-                    {
-                        //print("grass overlapped");
-                        civilizationObjectNoiseValue = 0;
-                        noiseValue = 0;
-                        continue;
-                    }
+                    //if (roadOverlap)
+                    //{
+                    //    //print("grass overlapped");
+                    //    civilizationObjectNoiseValue = 0;
+                    //    noiseValue = 0;
+                    //    continue;
+                    //}
 
                     #endregion
 
@@ -1810,19 +1854,19 @@ public class MapManager : MonoBehaviour
 
     #endregion
 
-    [ContextMenu("GetClampedDetailPatches")]
-    public void GetClampedDetailPatches()
-    {
-        //print("======================== GetClampedDetailPatches ======================== ");
+    //[ContextMenu("GetClampedDetailPatches")]
+    //public void GetClampedDetailPatches()
+    //{
+    //    //print("======================== GetClampedDetailPatches ======================== ");
 
-        Vector2Int[] arr = terrain.terrainData.GetClampedDetailPatches(1);
+    //    Vector2Int[] arr = terrain.terrainData.GetClampedDetailPatches(1);
 
-        foreach(Vector2Int p in arr) 
-        {
-            //print("GetClampedDetailPatches = " + p);
-        }
+    //    foreach(Vector2Int p in arr) 
+    //    {
+    //        //print("GetClampedDetailPatches = " + p);
+    //    }
 
-    }
+    //}
 
 
     #region Pre - Add Flora Objects to Terrain 
@@ -2133,14 +2177,14 @@ public class MapManager : MonoBehaviour
     public NoiseData CivilizationNoise;
     public float totalCivilizationObjectValues;
     public float civilizationNoisePeakValue;
-    public bool hasCity;
-    public float townLimit;
-    public float cityLimit;
-    public int hotSpotCount;
-    public float hotSpotClumpMinDistanceMagnitude;
+    //public bool hasCity;
+    //public float townLimit;
+    //public float cityLimit;
+    //public int hotSpotCount;
+    //public float hotSpotClumpMinDistanceMagnitude;
 
-    public List<Vector2> hotSpots;
-    public List<float> hotSpotValues;
+    //public List<Vector2> hotSpots;
+    //public List<float> hotSpotValues;
     public NoiseData CityMap;
     public GameObject CivilizationTestPrefab;
     public TerrainDetailPrefab[] civlizationTestPrefab;
@@ -2165,22 +2209,14 @@ public class MapManager : MonoBehaviour
 
     public void GenerateCivilizationNoise()
     {
-        hotSpots.Clear();
-        hotSpotValues.Clear();
-
-        for (int i = 0;i< hotSpotCount;i++) 
-        {
-            hotSpots.Add(new Vector2(0, 0));
-            hotSpotValues.Add(0);
-        }
-
+      
         // Use a random seed each time the script runs
 
         int randX = UnityEngine.Random.Range(0, 10000);
         int randY = UnityEngine.Random.Range(0, 10000);
 
 
-        CivilizationNoise.texture = new Texture2D(terrain.terrainData.detailResolution, terrain.terrainData.detailResolution);
+        //CivilizationNoise.texture = new Texture2D(terrain.terrainData.detailResolution, terrain.terrainData.detailResolution);
 
         CivilizationNoise.heights = new float[terrain.terrainData.detailResolution, terrain.terrainData.detailResolution];
 
@@ -2192,7 +2228,7 @@ public class MapManager : MonoBehaviour
             randX, randY, CivilizationNoise.scale, CivilizationNoise.noiseType,
             ref CivilizationNoise.texture, FloraNoiseData.heights, CivilizationFloraInteraction);
 
-        CivilizationNoise.texture = XizukiMethods.Textures.Xi_Helper_Texture.AdjustContrast(CivilizationNoise.texture, CivilizationNoise.contrast);
+        //CivilizationNoise.texture = XizukiMethods.Textures.Xi_Helper_Texture.AdjustContrast(CivilizationNoise.texture, CivilizationNoise.contrast);
     }
 
 
@@ -2201,33 +2237,33 @@ public class MapManager : MonoBehaviour
         bool hasHigherValue = false;
         bool inMinimalDistance = false; ;
 
-        Vector2[] previousHotSpots = hotSpots.ToArray();
+        //Vector2[] previousHotSpots = hotSpots.ToArray();
 
-        for (int i = 0; i < hotSpots.Count; i++)
-        {
-            float magnitude = Mathf.Abs((hotSpots[i]-pos).magnitude);
+        //for (int i = 0; i < hotSpots.Count; i++)
+        //{
+        //    float magnitude = Mathf.Abs((hotSpots[i]-pos).magnitude);
 
-            if(magnitude < hotSpotClumpMinDistanceMagnitude)
-            {
-                return;
-            }
-        }
+        //    if(magnitude < hotSpotClumpMinDistanceMagnitude)
+        //    {
+        //        return;
+        //    }
+        //}
 
-        for (int i = 0; i < hotSpots.Count; i++)
-        {
-            if (hasHigherValue)
-            {
-                hotSpots[i] = previousHotSpots[i - 1];
-            }
+        //for (int i = 0; i < hotSpots.Count; i++)
+        //{
+        //    if (hasHigherValue)
+        //    {
+        //        hotSpots[i] = previousHotSpots[i - 1];
+        //    }
 
-            else if (noiseValue > hotSpotValues[i])
-            {
-                hotSpotValues[i] = noiseValue;
-                hotSpots[i] = pos;
-                hasHigherValue = true;
-            }
+        //    else if (noiseValue > hotSpotValues[i])
+        //    {
+        //        hotSpotValues[i] = noiseValue;
+        //        hotSpots[i] = pos;
+        //        hasHigherValue = true;
+        //    }
 
-        }
+        //}
     }
 
 
@@ -2242,7 +2278,7 @@ public class MapManager : MonoBehaviour
             result = InverseFlora;
         }
 
-        CivilizationHotSpotsCheck(result, new Vector2(x, y));
+        //CivilizationHotSpotsCheck(result, new Vector2(x, y));
 
         return result;
     }
@@ -2267,14 +2303,6 @@ public class MapManager : MonoBehaviour
 
 
 
-    public void SpawnStructures()
-    {
-        // Set Civilization Hot Spots
-        for(int i = 0; i < hotSpots.Count; i++)
-        {
-
-        }
-    }
 
 
 

@@ -26,6 +26,8 @@ public class CarScript : MonoBehaviour
         carFeedbackScript = Xi_Helper_GameObjects.ConditionalAssignment<CarFeedbackScript>(GetComponent<CarFeedbackScript>());
         splineAnimate = Xi_Helper_GameObjects.ConditionalAssignment<SplineAnimate>(transform.parent.GetComponent<SplineAnimate>());
         namedPipeServer = GameObject.FindObjectOfType<NamedPipeServer>();   
+
+        meshRenderers = GetComponentsInChildren<MeshRenderer>();
     }
 
 
@@ -184,7 +186,7 @@ public class CarScript : MonoBehaviour
         GetHit();
     }
 
-    public MeshRenderer meshRenderer;
+    public MeshRenderer[] meshRenderers;
     public Material baseMat;
     public Material hitMat;
 
@@ -217,9 +219,16 @@ public class CarScript : MonoBehaviour
         {
             yield return new WaitForSeconds(perTickTime/2);
             hitMat.color = recoveryColor;
-
+            //foreach (MeshRenderer renderer in meshRenderers)
+            //{
+            //    renderer.enabled = false;
+            //}
             yield return new WaitForSeconds(perTickTime/2);
             hitMat.color = baseColor;
+            //foreach (MeshRenderer renderer in meshRenderers)
+            //{
+            //    renderer.enabled = true;
+            //}
             tickCounter++;
         }
 

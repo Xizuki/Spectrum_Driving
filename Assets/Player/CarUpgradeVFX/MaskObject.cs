@@ -63,7 +63,7 @@ public class MaskObject : MonoBehaviour
             }
         }
     }
-
+    
     public bool onUpdate;
 
     // Update is called once per frame
