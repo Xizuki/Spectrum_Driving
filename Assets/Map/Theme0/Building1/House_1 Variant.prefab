@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 8989818379004302512}
   - component: {fileID: 8989818379005072530}
   - component: {fileID: 8989818379006203474}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: House_1_lod_2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -94,7 +94,7 @@ GameObject:
   - component: {fileID: 8989818379004302514}
   - component: {fileID: 8989818379005072532}
   - component: {fileID: 8989818379006203476}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: House_1_lod_1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -177,7 +177,7 @@ GameObject:
   - component: {fileID: 8989818379004302516}
   - component: {fileID: 8989818379005072534}
   - component: {fileID: 8989818379006203478}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: House_1_lod_0
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -260,6 +260,10 @@ PrefabInstance:
     - target: {fileID: 100000, guid: 28d592096e7e76148945c98658a6c011, type: 3}
       propertyPath: m_Name
       value: House_1 Variant
+      objectReference: {fileID: 0}
+    - target: {fileID: 100000, guid: 28d592096e7e76148945c98658a6c011, type: 3}
+      propertyPath: m_Layer
+      value: 11
       objectReference: {fileID: 0}
     - target: {fileID: 400000, guid: 28d592096e7e76148945c98658a6c011, type: 3}
       propertyPath: m_RootOrder
@@ -443,6 +447,10 @@ PrefabInstance:
     - target: {fileID: 9058173111892073151, guid: 27b897af20a639f449ee61b8fc852d53, type: 3}
       propertyPath: m_Name
       value: Foundation
+      objectReference: {fileID: 0}
+    - target: {fileID: 9058173111892073151, guid: 27b897af20a639f449ee61b8fc852d53, type: 3}
+      propertyPath: m_Layer
+      value: 11
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

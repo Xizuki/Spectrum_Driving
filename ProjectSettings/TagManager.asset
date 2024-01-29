@@ -18,12 +18,12 @@ TagManager:
   - Water
   - UI
   - Obstacle
-  - 
-  - 
-  - 
+  - Road
+  - Grass
+  - GrassMask
   - GroundMask
   - Ground
-  - 
+  - InnerGround
   - 
   - 
   - 
