@@ -35,7 +35,7 @@ public class NamedPipeServer : MonoBehaviour
 
 
         //QualitySettings.vSyncCount = 1;
-        Application.targetFrameRate = 120;
+        //Application.targetFrameRate = 120;
 
         DontDestroyOnLoad(this);
 

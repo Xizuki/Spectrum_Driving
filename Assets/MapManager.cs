@@ -420,15 +420,15 @@ public class MapManager : MonoBehaviour
 
 
 
-                heights[yValue - 1, xValue - 1] = splinePos.y / terrain.terrainData.size.y - 0.02f;
-                heights[yValue - 1, xValue] = splinePos.y / terrain.terrainData.size.y - 0.02f;
-                heights[yValue - 1, xValue + 1] = splinePos.y / terrain.terrainData.size.y - 0.02f;
-                heights[yValue, xValue - 1] = splinePos.y / terrain.terrainData.size.y - 0.02f;
-                heights[yValue, xValue] =(splinePos.y / terrain.terrainData.size.y)- 0.02f;
-                heights[yValue, xValue + 1] = splinePos.y / terrain.terrainData.size.y - 0.02f;
-                heights[yValue + 1, xValue - 1] = splinePos.y / terrain.terrainData.size.y - 0.02f;
-                heights[yValue + 1, xValue] = splinePos.y / terrain.terrainData.size.y - 0.02f;
-                heights[yValue + 1, xValue + 1] = splinePos.y / terrain.terrainData.size.y - 0.02f;
+                heights[yValue - 1, xValue - 1] = splinePos.y / terrain.terrainData.size.y - 0.01f;
+                heights[yValue - 1, xValue] = splinePos.y / terrain.terrainData.size.y - 0.01f;
+                heights[yValue - 1, xValue + 1] = splinePos.y / terrain.terrainData.size.y - 0.01f;
+                heights[yValue, xValue - 1] = splinePos.y / terrain.terrainData.size.y - 0.01f;
+                heights[yValue, xValue] =(splinePos.y / terrain.terrainData.size.y)- 0.01f;
+                heights[yValue, xValue + 1] = splinePos.y / terrain.terrainData.size.y - 0.01f;
+                heights[yValue + 1, xValue - 1] = splinePos.y / terrain.terrainData.size.y - 0.01f;
+                heights[yValue + 1, xValue] = splinePos.y / terrain.terrainData.size.y - 0.01f;
+                heights[yValue + 1, xValue + 1] = splinePos.y / terrain.terrainData.size.y - 0.01f;
 
 
 
@@ -1846,6 +1846,9 @@ public class MapManager : MonoBehaviour
 
         if (heights[(int)(x * scale), (int)(y* scale)] <= waterLevel/terrain.terrainData.size.y)
             noiseValue = 0;
+
+        // Avr out nearby heights 
+
 
         return noiseValue;
     }
