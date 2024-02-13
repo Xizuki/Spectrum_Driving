@@ -24,7 +24,8 @@ public class ComputeShaderTester : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        CubesStructInitialization();
+        GeneratePerlinNoise();
+        //CubesStructInitialization();
     }
 
     // Update is called once per frame
@@ -56,6 +57,64 @@ public class ComputeShaderTester : MonoBehaviour
         //print("Elapsed Time = " + stopwatch.Elapsed);
     }
 
+    public ComputeShader perlinComputeShader;
+    public int width = 256;
+    public int height = 256;
+
+    private RenderTexture noiseTexture;
+    private float[,] noiseMap;
+    [ContextMenu("GeneratePerlinNoise")]
+    void GeneratePerlinNoise()
+    {
+        // Create a render texture to store the generated noise
+        noiseTexture = new RenderTexture(width, height, 0, RenderTextureFormat.ARGBFloat);
+        noiseTexture.enableRandomWrite = true;
+        noiseTexture.Create();
+
+        // Create a 2D array to store the noise values
+        noiseMap = new float[width, height];
+
+        // Set the compute shader parameters
+        int kernelIndex = perlinComputeShader.FindKernel("CSMain"); // Adjust "CSMain" if your kernel name is different
+        perlinComputeShader.SetTexture(kernelIndex, "Result", noiseTexture);
+        perlinComputeShader.Dispatch(kernelIndex, width / 8, height / 8, 1); // Adjust thread group size as needed
+
+        // Read the render texture data into the noise map
+        RenderTexture.active = noiseTexture;
+        var noiseData = new Texture2D(width, height, TextureFormat.RGBAFloat, false);
+        noiseData.ReadPixels(new Rect(0, 0, width, height), 0, 0);
+        RenderTexture.active = null;
+
+        // Convert the texture data to a 2D array
+        Color[] pixels = noiseData.GetPixels();
+        for (int y = 0; y < height; y++)
+        {
+            for (int x = 0; x < width; x++)
+            {
+                noiseMap[x, y] = pixels[y * width + x].r;
+            }
+        }
+
+        // Cleanup
+        Destroy(noiseData);
+    }
+
+    // Example method to access the noise map
+    void ExampleMethod()
+    {
+        // Access noise values from the noise map
+        float value = noiseMap[10, 20];
+        UnityEngine.Debug.Log("Noise value at position (10, 20): " + value);
+    }
+
+    void OnDestroy()
+    {
+        // Release the render texture
+        if (noiseTexture != null)
+            noiseTexture.Release();
+    }
+
+
 
     [ContextMenu("Randomized GPU")]
     public void OnRandomizedGPU()
@@ -73,7 +132,8 @@ public class ComputeShaderTester : MonoBehaviour
         computeShader.SetBuffer(0, "cubes", cubesBuffer);
         computeShader.SetFloat("resolution", data.Length);
         computeShader.SetFloat("repetitions", repetitions);
-        computeShader.Dispatch(0, data.Length / 10, 1, 1);
+        computeShader.SetInt("randSeedValue", (int)DateTime.Now.Ticks);
+        computeShader.Dispatch(0, data.Length / 10, 10, 10);
 
 
         cubesBuffer.GetData(data);

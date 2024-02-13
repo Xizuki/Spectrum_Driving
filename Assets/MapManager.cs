@@ -16,9 +16,8 @@ using Unity.Mathematics;
 using UnityEngine.Experimental.Rendering;
 using Newtonsoft.Json.Linq;
 using JetBrains.Annotations;
-using static UnityEngine.Rendering.DebugUI;
 using System.Diagnostics;
-
+using Unity.Burst;
 
 #region Enums
 public enum Civilization { Wild, Rural, Suburbs, Urban}
@@ -307,18 +306,19 @@ public class MapManager : MonoBehaviour
 
         GenerateFloraMap();
         GenerateCivilizationNoise();
-        //////CivilizationHotSpots();
-        AddFloraDetailsToTerrain();
-        GenerateGrass();
-        AddFloraObjectToTerrain();
-        GenerateFloraObjects();
+        ////////CivilizationHotSpots();
+        //AddFloraDetailsToTerrain();
+        //GenerateGrass();
+        //AddFloraObjectToTerrain();
+        //GenerateFloraObjects();
 
 
-        AddCivilizationObjectsToTerrain();
-        CivilizationTest();
+        //AddCivilizationObjectsToTerrain();
+        //CivilizationTest();
 
-        AddTerrianTextureLayer();
-        TerrainTexturing();
+        //AddTerrianTextureLayer();
+        //TerrainTexturing();
+
 
         //GenerateEntranceExit();
         //GenerateRoad();
@@ -336,100 +336,93 @@ public class MapManager : MonoBehaviour
         print($"GenerateMap() took {stopwatch.Elapsed.TotalSeconds} seconds to run.");
     }
 
+    public GameObject debugParent;
+    public GameObject debugGO;
+    public GameObject debugGO1;
+    public GameObject debugGO2;
+    public bool spawnRoadCubes;
+    List<GameObject> heightPoints = new List<GameObject>();
 
     [ContextMenu("RoadTest")]
     public void RoadTest()
     {
+
+        if (debugParent != null)
+            DestroyImmediate(debugParent);
+
+        debugParent = GameObject.Instantiate(new GameObject());
+
+
+
         roadSplineLowestPoint = terrain.terrainData.size.y;
 
         roadOverlayingHeightsArray = new float[(int)(terrain.terrainData.detailResolution / roadOverlayScale), (int)(terrain.terrainData.detailResolution / roadOverlayScale)];
 
 
 
-        float roadHeightScale = (float)roadOverlayingHeightsArray.GetLength(0) / ((float)terrain.terrainData.heightmapResolution-1);
-        print("roadHeightScale = " + roadHeightScale);
+        float detailToSizeScale = (float)terrain.terrainData.detailResolution / (float)terrain.terrainData.size.x / roadOverlayScale;
 
 
-        for (int i = 0; i < roadSplineTerrainProjectionResolution-1 ; i++)
+
+        for (int i = 0; i < roadSplineTerrainProjectionResolution; i++)
         {
-            float3 splinePos = Vector3.zero;
 
-
-            float t1 = (float)i / roadSplineTerrainProjectionResolution;
+            float t1 = ((float)i) / roadSplineTerrainProjectionResolution;
             float t2 = ((float)i + 1) / roadSplineTerrainProjectionResolution;
+
+
 
 
             for (int j = 0; j < roadOverlayResolution; j++)
             {
                 float tDiff = t2 - t1;
                 float division = j / roadOverlayResolution;
-                splinePos = roadSplineContainer.Spline.EvaluatePosition((t1 + (tDiff * division)));
 
 
+                Vector3 splinePos = roadSplineContainer.Spline.EvaluatePosition((t1 + (tDiff * division)));
 
-
-
-                float detailToSizeScale = (float)terrain.terrainData.detailResolution / (float)terrain.terrainData.size.x / roadOverlayScale;
-
+                Vector2 splinePosV2 = new Vector2(splinePos.x, splinePos.z) * detailToSizeScale;
 
                 int xValue = Mathf.RoundToInt(splinePos.x * detailToSizeScale);
                 int yValue = Mathf.RoundToInt(splinePos.z * detailToSizeScale);
 
 
 
-                #region Assign Values to Array
 
-
-
-                if (xValue - 1 >= 0)
+                for(int xdiff = -2;  xdiff < 2; xdiff++) 
                 {
-                    if (yValue - 1 >= 0)
-                        roadOverlayingHeightsArray[xValue - 1, yValue - 1] = splinePos.y;
+                    for (int ydiff = -2; ydiff < 2; ydiff++)
+                    {
+                        //if (roadOverlayingHeightsArray[])
+                        int xPos = xValue + xdiff;
+                        int yPos = yValue + ydiff;
 
-                    roadOverlayingHeightsArray[xValue - 1, yValue] = splinePos.y;
+                        float magDiff = (splinePosV2 - new Vector2(xPos, yPos)).magnitude;
 
-                    if (yValue - 1 >= roadOverlayingHeightsArray.GetLength(1))
-                        roadOverlayingHeightsArray[xValue - 1, yValue + 1] = splinePos.y;
+                        if (roadOverlayingHeightsArray[xPos, yPos] > magDiff || roadOverlayingHeightsArray[xPos, yPos] == 0)
+                        {
+
+                            roadOverlayingHeightsArray[xPos, yPos] = magDiff;
+                            heights[yPos, xPos] = (splinePos.y-0.1f) / size.y;
+
+
+                            if (spawnRoadCubes)
+                            {
+                                GameObject go;
+      
+                                    go = GameObject.Instantiate(debugGO);
+                                    go.transform.position = new Vector3(
+                                        (xPos) * size.x / roadOverlayingHeightsArray.GetLength(0),
+                                        splinePos.y,
+                                        (yPos) * size.z / roadOverlayingHeightsArray.GetLength(1)); // Use GetLength(1) for y dimension
+                                    go.GetComponent<debugCubeScript>().arrayPos = new Vector2(xPos, yPos);
+                                    go.GetComponent<debugCubeScript>().i = (t1 + (tDiff * division));
+                                    go.transform.parent = debugParent.transform;
+                            }
+
+                        }
+                    }
                 }
-
-                {
-                    if (yValue - 1 >= 0)
-                        roadOverlayingHeightsArray[xValue, yValue - 1] = splinePos.y;
-
-                    roadOverlayingHeightsArray[xValue, yValue] = splinePos.y;
-
-                    if (yValue - 1 >= roadOverlayingHeightsArray.GetLength(1))
-                        roadOverlayingHeightsArray[xValue, yValue + 1] = splinePos.y;
-                }
-
-                if (xValue + 1 < roadOverlayingHeightsArray.GetLength(0))
-                {
-                    if (yValue - 1 >= 0)
-                        roadOverlayingHeightsArray[xValue + 1, yValue - 1] = splinePos.y;
-
-                    roadOverlayingHeightsArray[xValue + 1, yValue] = splinePos.y;
-
-                    if (yValue - 1 >= roadOverlayingHeightsArray.GetLength(1))
-                        roadOverlayingHeightsArray[xValue + 1, yValue + 1] = splinePos.y;
-                }
-
-
-
-
-                #endregion
-
-
-
-                heights[yValue - 1, xValue - 1] = splinePos.y / terrain.terrainData.size.y - 0.01f;
-                heights[yValue - 1, xValue] = splinePos.y / terrain.terrainData.size.y - 0.01f;
-                heights[yValue - 1, xValue + 1] = splinePos.y / terrain.terrainData.size.y - 0.01f;
-                heights[yValue, xValue - 1] = splinePos.y / terrain.terrainData.size.y - 0.01f;
-                heights[yValue, xValue] =(splinePos.y / terrain.terrainData.size.y)- 0.01f;
-                heights[yValue, xValue + 1] = splinePos.y / terrain.terrainData.size.y - 0.01f;
-                heights[yValue + 1, xValue - 1] = splinePos.y / terrain.terrainData.size.y - 0.01f;
-                heights[yValue + 1, xValue] = splinePos.y / terrain.terrainData.size.y - 0.01f;
-                heights[yValue + 1, xValue + 1] = splinePos.y / terrain.terrainData.size.y - 0.01f;
-
 
 
 
@@ -439,13 +432,17 @@ public class MapManager : MonoBehaviour
                 }
 
             }
+
         }
+
 
 
         terrain.terrainData.SetHeights(0,0,heights);
         
 
         roadOverlayTexture = ConvertIntArrayToTexture(roadOverlayingHeightsArray);
+
+
 
         #region Debug Method for Texture Visual
         Texture2D ConvertIntArrayToTexture(float[,] intArray)
@@ -583,11 +580,7 @@ public class MapManager : MonoBehaviour
 
     public void ScaleRoadSplineToTerrain()
     {
-        //if(roadSplineContainer.Splines.Count>=1)
-        //    roadSplineContainer.RemoveSplineAt(0);
 
-        //roadSplineContainer.Spline = null;
-        //roadSplineContainer.AddSpline(new Spline());
 
         referenceRoadSpline = new Spline();
         referenceRoadSpline.Copy(roadSplinePrefabGO.GetComponent<SplineContainer>().Spline);
@@ -603,9 +596,7 @@ public class MapManager : MonoBehaviour
 
             referenceRoadSpline.SetKnot(i, scaledKnot, BezierTangent.In);
         }
-        //referenceRoadSpline.SetTangentMode(TangentMode.AutoSmooth);
-
-        //referenceRoadSpline. = knots;
+      
     }
 
 
@@ -649,54 +640,6 @@ public class MapManager : MonoBehaviour
                 float division = j/roadOverlayResolution;
                 referenceRoadSpline.Evaluate((t1+ (tDiff* division)), out splinePos, out splineTanget, out splineUpVector);
 
-                // >>>>>>>> Set roadOverlayingHeightsArray Values as 1 or 0 if its overlaying
-
-                //    #region Assign Values to Array
-
-                //    float detailToSizeScale = (float)terrain.terrainData.detailResolution / (float)terrain.terrainData.size.x / roadOverlayScale;
-
-
-                //    int xValue = Mathf.RoundToInt(splinePos.x * detailToSizeScale);
-                //    int yValue = Mathf.RoundToInt(splinePos.z * detailToSizeScale);
-
-
-
-                //    if (xValue - 1 >= 0)
-                //    {
-                //        if (yValue - 1 >= 0)
-                //            roadOverlayingHeightsArray[xValue - 1, yValue - 1] = 1;
-
-                //        roadOverlayingHeightsArray[xValue - 1, yValue] = 1;
-
-                //        if (yValue - 1 >= roadOverlayingHeightsArray.GetLength(1))
-                //            roadOverlayingHeightsArray[xValue - 1, yValue + 1] = 1;
-                //    }
-
-                //    {
-                //        if (yValue - 1 >= 0)
-                //            roadOverlayingHeightsArray[xValue, yValue - 1] = 1;
-
-                //        roadOverlayingHeightsArray[xValue, yValue] = 1;
-
-                //        if (yValue - 1 >= roadOverlayingHeightsArray.GetLength(1))
-                //            roadOverlayingHeightsArray[xValue, yValue + 1] = 1;
-                //    }
-
-                //    if (xValue + 1 < roadOverlayingHeightsArray.GetLength(0))
-                //    {
-                //        if (yValue - 1 >= 0)
-                //            roadOverlayingHeightsArray[xValue + 1, yValue - 1] = 1;
-
-                //        roadOverlayingHeightsArray[xValue + 1, yValue] = 1;
-
-                //        if (yValue - 1 >= roadOverlayingHeightsArray.GetLength(1))
-                //            roadOverlayingHeightsArray[xValue + 1, yValue + 1] = 1;
-                //    }
-
-
-
-
-                //#endregion
             }
 
             Vector3 pos = new Vector3(splinePos.x, terrain.SampleHeight(splinePos), splinePos.z);
@@ -842,10 +785,11 @@ public class MapManager : MonoBehaviour
         return result;
     }
 
-
+    [BurstCompile]
     public float[,] GetPerlinNoise(float[,] arr, float xSeed, float ySeed, float scale, NoiseType noiseType, ref Texture2D texture)
     {
         float[,] result = new float[arr.GetLength(0), arr.GetLength(1)];
+
 
         // Loop through each pixel in the texture
         for (int x = 0; x < arr.GetLength(1); x++)
@@ -886,15 +830,90 @@ public class MapManager : MonoBehaviour
                 // Set the pixel color based on the Perlin noise value
                 //noiseDatas[i].texture.SetPixel(x, y, new Color(noisePixelValue, noisePixelValue, noisePixelValue));
                 texture.SetPixel(x, y, new Color(noisePixelValue, noisePixelValue, noisePixelValue));
+
+                //noisePixelValue = 1;
+                //GameObject go = GameObject.Instantiate(debugGO);
+                //go.transform.position = new Vector3(x * size.x / arr.GetLength(0), noisePixelValue*size.y, y * size.z / arr.GetLength(1));
+
                 result[x, y] = noisePixelValue;
             }
         }
+        
+
+        //for(int x = 0; x < result.GetLength(0)-1; x++)
+        //{
+        //    if (x % 5 == 0) continue;
+
+        //    result[x, x] = 0;
+        //    result[x + 1, x + 1] = 0;
+        //    result[x + 1, x] = 0;
+        //    result[x, x + 1] = 0;
+
+        //}
+
+
 
         texture.Apply();
 
         return result;
     }
 
+
+
+    [BurstCompile]
+    public float[,] GetPerlinNoise(float[,] arr, float xSeed, float ySeed, float scale, NoiseType noiseType, NoiseInteract noiseInteract)
+    {
+        float[,] result = new float[arr.GetLength(0), arr.GetLength(1)];
+
+        // Loop through each pixel in the texture
+        for (int x = 0; x < arr.GetLength(1); x++)
+        {
+            for (int y = 0; y < arr.GetLength(0); y++)
+            {
+                // Introduce randomness to the coordinates
+                float xCoord = (float)x / scale;
+                float yCoord = (float)y / scale;
+
+
+                float noisePixelValue = 0;
+
+                switch (noiseType)
+                {
+                    case NoiseType.Perlin:
+                        noisePixelValue = UnityEngine.Mathf.PerlinNoise(xCoord + xSeed, yCoord + ySeed);
+                        break;
+                    case NoiseType.c:
+                        noisePixelValue = noise.cnoise(new float2(xCoord + xSeed, yCoord + ySeed));
+                        break;
+                    case NoiseType.s:
+                        noisePixelValue = noise.snoise(new float2(xCoord + xSeed, yCoord + ySeed));
+                        break;
+                    case NoiseType.sr:
+                        noisePixelValue = noise.srnoise(new float2(xCoord + xSeed, yCoord + ySeed));
+                        break;
+                }
+
+                if (noisePixelValue > 1)
+                    noisePixelValue = 1;
+                else if (noisePixelValue < 0)
+                    noisePixelValue = 0;
+
+                //noisePixelValue = NoiseTrim(noisePixelValue, noiseDatas[i].trimDir, noiseDatas[i].trimCutOffPoint);
+
+                noiseInteract(ref noisePixelValue);
+
+                // Set the pixel color based on the Perlin noise value
+                //noiseDatas[i].texture.SetPixel(x, y, new Color(noisePixelValue, noisePixelValue, noisePixelValue));
+                result[x, y] = noisePixelValue;
+            }
+        }
+
+        return result;
+    }
+
+
+
+    [BurstCompile]
     public float[,] GetPerlinNoise(float[,] arr, float xSeed, float ySeed, float scale, NoiseType noiseType, ref Texture2D texture, NoiseInteract noiseInteract)
     {
         float[,] result = new float[arr.GetLength(0), arr.GetLength(1)];
@@ -959,7 +978,7 @@ public class MapManager : MonoBehaviour
 
 
 
-
+    [BurstCompile]
     public float[,] GetPerlinNoise(float[,] arr, float xSeed, float ySeed, float scale, NoiseType noiseType, ref Texture2D texture, NoiseCheck noiseCheck)
     {
         float[,] result = new float[arr.GetLength(0), arr.GetLength(1)];
@@ -1015,7 +1034,7 @@ public class MapManager : MonoBehaviour
 
 
 
-
+    [BurstCompile]
     public float[,] GetPerlinNoise_Compare(float[,] arr, float xSeed, float ySeed, float scale,
     NoiseType noiseType, ref Texture2D texture, float[,] comparedNoise, NoiseCompare noiseCompare)
     {
@@ -1063,7 +1082,7 @@ public class MapManager : MonoBehaviour
 
                 // Set the pixel color based on the Perlin noise value
                 //noiseDatas[i].texture.SetPixel(x, y, new Color(noisePixelValue, noisePixelValue, noisePixelValue));
-                texture.SetPixel(x, y, new Color(noisePixelValue, noisePixelValue, noisePixelValue));
+                //texture.SetPixel(x, y, new Color(noisePixelValue, noisePixelValue, noisePixelValue));
                 result[x, y] = noisePixelValue;
             }
         }
@@ -1840,18 +1859,7 @@ public class MapManager : MonoBehaviour
     #region Noise Map Generation
 
 
-    public float FloraWaterCheck(int x, int y, float noiseValue)
-    {
-        float scale = (float)(heights.GetLength(0)-1) / (float)terrain.terrainData.detailResolution;
-
-        if (heights[(int)(x * scale), (int)(y* scale)] <= waterLevel/terrain.terrainData.size.y)
-            noiseValue = 0;
-
-        // Avr out nearby heights 
-
-
-        return noiseValue;
-    }
+ 
 
     [ContextMenu("Generate Flora Map")]
     public void GenerateFloraMap()
@@ -1874,7 +1882,7 @@ public class MapManager : MonoBehaviour
         FloraNoiseData.texture = new Texture2D(alphaMapResolution, alphaMapResolution, TextureFormat.ARGB32, false);
 
         FloraNoiseData.heights = GetPerlinNoise(FloraNoiseData.heights, randX, randY, FloraNoiseData.scale, 
-                                                FloraNoiseData.noiseType, ref FloraNoiseData.texture, FloraWaterCheck);
+                                                FloraNoiseData.noiseType, ref FloraNoiseData.texture ,CivilizationFloraWaterInteraction());
 
 
         // Apply the changes to the texture
@@ -2030,39 +2038,10 @@ public class MapManager : MonoBehaviour
 
                     bool roadOverlap = false;
 
-                    if (roadOverlayingHeightsArray[roadScaledY, roadScaledX] == 1)
+                    if (roadOverlayingHeightsArray[roadScaledY, roadScaledX] > 0)
                         roadOverlap = true;
 
-                    //int value = 0;
-
-
-                    //if (roadScaledY > 0 && roadScaledX > 0)
-                    //    value += roadOverlayingHeightsArray[roadScaledY - 1, roadScaledX - 1];
-                    //if (roadScaledX > 0)
-                    //    value += roadOverlayingHeightsArray[roadScaledY, roadScaledX - 1];
-                    //if (roadScaledY < roadOverlayingHeightsArray.GetLength(0) - 1 && roadScaledX > 0)
-                    //    value += roadOverlayingHeightsArray[roadScaledY + 1, roadScaledX - 1];
-
-                    //if (roadScaledY > 0)
-                    //    value += roadOverlayingHeightsArray[roadScaledY - 1, roadScaledX];
-                    //value += roadOverlayingHeightsArray[roadScaledY, roadScaledX];
-
-
-
-
-                    //if (roadScaledX < roadOverlayingHeightsArray.GetLength(0) - 1)
-                    //{
-                    //    if (roadScaledY > 0)
-                    //        value += roadOverlayingHeightsArray[roadScaledY - 1, roadScaledX + 1];
-
-                    //    value += roadOverlayingHeightsArray[roadScaledY, roadScaledX + 1];
-
-                    //    if (roadScaledY < roadOverlayingHeightsArray.GetLength(0) - 1)
-                    //        value += roadOverlayingHeightsArray[roadScaledY + 1, roadScaledX + 1];
-                    //}
-
-                    //if (roadOverlayingHeightsArray[(int)(y / roadOverlayScale), (int)(x / roadOverlayScale)] >= 1)
-                    //    roadOverlap = true;
+           
 
                     if (roadOverlap)
                     {
@@ -2510,6 +2489,8 @@ public class MapManager : MonoBehaviour
 
     public float CivilizationFloraWaterInteraction(int x, int y, float CivilizationPixelNoiseValue, float[,] floraNoise)
     {
+
+
         float scale = (float)(heights.GetLength(0) - 1) / (float)terrain.terrainData.detailResolution;
         float result = CivilizationPixelNoiseValue;
 
@@ -2744,7 +2725,7 @@ public class MapManager : MonoBehaviour
                             continue;
                         }
 
-                        float size = 0.2f;//AdjustValueToCurve(noiseValue, civilizationObjectsSizeCurve[selectedObjectIndex], true);
+                        float size = 0.01f;//AdjustValueToCurve(noiseValue, civilizationObjectsSizeCurve[selectedObjectIndex], true);
 
                         if (size > 0f)
                         {
