@@ -132,6 +132,12 @@ public class MapManager : MonoBehaviour
     public WaterBody waterBody;
     [TooltipAttribute("What Height Value means underwater")]
     public float waterLevel;
+    [TooltipAttribute("buffer for objects that spawn inaccurately")]
+    public float waterBuffer;
+
+    public float waterFloraBuffer;
+
+
     [TooltipAttribute("% Amount of Total Area Underwater")]
     public float waterAmount;
     public float roadSplineLowestPoint;
@@ -306,18 +312,18 @@ public class MapManager : MonoBehaviour
 
         GenerateFloraMap();
         GenerateCivilizationNoise();
-        ////////CivilizationHotSpots();
-        //AddFloraDetailsToTerrain();
-        //GenerateGrass();
-        //AddFloraObjectToTerrain();
-        //GenerateFloraObjects();
+        //////CivilizationHotSpots();
+        AddFloraDetailsToTerrain();
+        GenerateGrass();
+        AddFloraObjectToTerrain();
+        GenerateFloraObjects();
 
 
-        //AddCivilizationObjectsToTerrain();
-        //CivilizationTest();
+        AddCivilizationObjectsToTerrain();
+        CivilizationTest();
 
-        //AddTerrianTextureLayer();
-        //TerrainTexturing();
+        AddTerrianTextureLayer();
+        TerrainTexturing();
 
 
         //GenerateEntranceExit();
@@ -346,18 +352,17 @@ public class MapManager : MonoBehaviour
     [ContextMenu("RoadTest")]
     public void RoadTest()
     {
+        //if (debugParent != null)
+        //    DestroyImmediate(debugParent);
 
-        if (debugParent != null)
-            DestroyImmediate(debugParent);
-
-        debugParent = GameObject.Instantiate(new GameObject());
+        //debugParent = GameObject.Instantiate(new GameObject());
 
 
 
         roadSplineLowestPoint = terrain.terrainData.size.y;
 
         roadOverlayingHeightsArray = new float[(int)(terrain.terrainData.detailResolution / roadOverlayScale), (int)(terrain.terrainData.detailResolution / roadOverlayScale)];
-
+        roadOverlayingArray = new float[(int)(terrain.terrainData.detailResolution / roadOverlayScale), (int)(terrain.terrainData.detailResolution / roadOverlayScale)];
 
 
         float detailToSizeScale = (float)terrain.terrainData.detailResolution / (float)terrain.terrainData.size.x / roadOverlayScale;
@@ -387,9 +392,10 @@ public class MapManager : MonoBehaviour
                 int yValue = Mathf.RoundToInt(splinePos.z * detailToSizeScale);
 
 
+                roadOverlayingArray[xValue, yValue] = 3;
+                //roadOverlayingArray[xValue, yValue] = 1;
 
-
-                for(int xdiff = -2;  xdiff < 2; xdiff++) 
+                for (int xdiff = -2;  xdiff < 2; xdiff++) 
                 {
                     for (int ydiff = -2; ydiff < 2; ydiff++)
                     {
@@ -401,6 +407,17 @@ public class MapManager : MonoBehaviour
 
                         if (roadOverlayingHeightsArray[xPos, yPos] > magDiff || roadOverlayingHeightsArray[xPos, yPos] == 0)
                         {
+                            if(roadOverlayingArray[xPos, yPos] != 3)
+                            {
+                                if(Mathf.Abs(xdiff) <= 1 && Mathf.Abs(ydiff) <= 1)
+                                {
+                                    roadOverlayingArray[xPos, yPos] = 2;
+                                }
+                                else
+                                {
+                                    roadOverlayingArray[xPos, yPos] = 1;
+                                }
+                            }
 
                             roadOverlayingHeightsArray[xPos, yPos] = magDiff;
                             heights[yPos, xPos] = (splinePos.y-0.1f) / size.y;
@@ -438,9 +455,10 @@ public class MapManager : MonoBehaviour
 
 
         terrain.terrainData.SetHeights(0,0,heights);
-        
 
-        roadOverlayTexture = ConvertIntArrayToTexture(roadOverlayingHeightsArray);
+
+        roadOverlayTexture = ConvertIntArrayToTexture(roadOverlayingArray);
+        roadOverlayingHeightsTexture = ConvertIntArrayToTexture(roadOverlayingHeightsArray);
 
 
 
@@ -479,34 +497,6 @@ public class MapManager : MonoBehaviour
         #endregion
     }
 
-    [ContextMenu("RoadTerrainTest")]
-    public void RoadTerrainTest()
-    {
-        TerrainData t = terrain.terrainData;
-
-
-        float scale = (float)t.detailResolution /(float)roadOverlayScale/ (float)t.heightmapResolution;
-
-        for (int x = 0; x < roadOverlayingHeightsArray.GetLength(0); x++)
-        {
-            for (int y = 0; y < roadOverlayingHeightsArray.GetLength(1); y++)
-            {
-                int scaledX = (int)(x * scale);
-                int scaledY = (int)(y * scale);
-
-
-
-                // Average Out Nearby Heights
-
-                float roadHeight = roadOverlayingHeightsArray[scaledX, scaledY];
-
-                //roadOverlayingHeightsArray[scaledX, scaledY] = roadHeight;
-
-            }
-        }
-
-        t.SetHeights(0, 0, heights);
-    }
 
 
 
@@ -566,8 +556,10 @@ public class MapManager : MonoBehaviour
     public float roadOverlayTerrainPadding;
 
     public float[,] roadOverlayingHeightsArray;
+    public float[,] roadOverlayingArray;
     public float roadOverlayScale;
     public Texture2D roadOverlayTexture;
+    public Texture2D roadOverlayingHeightsTexture;
 
     public Vector3[] splineResolutionPositions;
 
@@ -1033,6 +1025,56 @@ public class MapManager : MonoBehaviour
     }
 
 
+    [BurstCompile]
+    public float[,] GetPerlinNoise_Compare(float[,] arr, float xSeed, float ySeed, float scale,
+   NoiseType noiseType,  float[,] comparedNoise, NoiseCompare noiseCompare)
+    {
+        float[,] result = new float[arr.GetLength(0), arr.GetLength(1)];
+
+        // Loop through each pixel in the texture
+        for (int x = 0; x < arr.GetLength(1); x++)
+        {
+            for (int y = 0; y < arr.GetLength(0); y++)
+            {
+                // Introduce randomness to the coordinates
+                float xCoord = (float)x / scale;
+                float yCoord = (float)y / scale;
+
+
+                float noisePixelValue = 0;
+
+                switch (noiseType)
+                {
+                    case NoiseType.Perlin:
+                        noisePixelValue = UnityEngine.Mathf.PerlinNoise(xCoord + xSeed, yCoord + ySeed);
+                        break;
+                    case NoiseType.c:
+                        noisePixelValue = noise.cnoise(new float2(xCoord + xSeed, yCoord + ySeed));
+                        break;
+                    case NoiseType.s:
+                        noisePixelValue = noise.snoise(new float2(xCoord + xSeed, yCoord + ySeed));
+                        break;
+                    case NoiseType.sr:
+                        noisePixelValue = noise.srnoise(new float2(xCoord + xSeed, yCoord + ySeed));
+                        break;
+                }
+
+                if (noisePixelValue > 1)
+                    noisePixelValue = 1;
+                else if (noisePixelValue < 0)
+                    noisePixelValue = 0;
+
+
+                noisePixelValue = noiseCompare(x, y, noisePixelValue, comparedNoise);
+
+
+                result[x, y] = noisePixelValue;
+            }
+        }
+
+        return result;
+    }
+
 
     [BurstCompile]
     public float[,] GetPerlinNoise_Compare(float[,] arr, float xSeed, float ySeed, float scale,
@@ -1298,6 +1340,7 @@ public class MapManager : MonoBehaviour
     }
 
 
+    [BurstCompile]
     public void TerrainTexturing()
     {
 
@@ -1314,6 +1357,7 @@ public class MapManager : MonoBehaviour
         // IDK WHY I NEED TO +1 HERE, also has a bug where it wont iterate on the last value;
         float terrainAlphaScale = (alphaMapResolution / terrain.terrainData.heightmapResolution) + 1;
 
+
         float dirtRatio = 1;
 
         float[] floraValues = new float[floraTerrainTextures.Length];
@@ -1328,6 +1372,10 @@ public class MapManager : MonoBehaviour
         {
             for (int z = 0; z < alphaMapResolution; z++)
             {
+
+                //print("Mathf.FloorToInt(x / terrainAlphaScale) = " + Mathf.FloorToInt(x / terrainAlphaScale));
+                //print("Mathf.FloorToInt(z / terrainAlphaScale) = " + Mathf.FloorToInt(z / terrainAlphaScale));
+
                 for (int i = 0; i < floraTerrainTextures.Length; i++)
                 {
                     floraValues[i] = AdjustValueToCurve(
@@ -1336,26 +1384,48 @@ public class MapManager : MonoBehaviour
                         , true);
                 }
 
-                floraValues = NormalizeArrayValues(floraValues);
+
+                
+               floraValues = NormalizeArrayValues(floraValues);
+
+                float waterGroundDiff = waterLevel - heights[Mathf.RoundToInt(x / terrainAlphaScale), Mathf.RoundToInt(z / terrainAlphaScale)] * size.y;
+                //                float waterGroundDiff = waterLevel - terrain.SampleHeight(new Vector3(z*size.z/ alphaMapResolution, 0,x* size.x / alphaMapResolution));
+
+                float groundFloraPercent = 1;
+
+                if (waterGroundDiff > 0)
+                {
+                    waterGroundDiff = waterLevel - terrain.SampleHeight(new Vector3(z * size.z / alphaMapResolution, 0, x * size.x / alphaMapResolution));
+
+                    if (waterGroundDiff > 0)
+                    {
+                        groundFloraPercent = (waterFloraBuffer - waterGroundDiff) / waterFloraBuffer;
+                    }
+                }
+
 
                 for (int i = 0; i < floraTerrainTextures.Length; i++)
                 {
+
                     floraValues[i] = floraValues[i] * FloraNoiseData.heights[x, z];
+                    floraValues[i] *= groundFloraPercent;
                 }
+
+
 
                 float totalFloraValue = 0;
-                for (int i = 0; i < floraValues.Length; i++)
-                {
-                    alphaMap[x, z, floraTerrainTextures[i].index] = floraValues[i];
-                    totalFloraValue += floraValues[i];
-                }
 
-
+                    for (int i = 0; i < floraValues.Length; i++)
+                    {
+                        alphaMap[x, z, floraTerrainTextures[i].index] = floraValues[i];
+                        totalFloraValue += floraValues[i];
+                    }
+                
+               
+                float groundPercentange = 1 - totalFloraValue;
+                
 
                 dirtRatio = 1 - FloraNoiseData.heights[x, z];
-                float groundPercentange = 1 - totalFloraValue;
-
-
 
 
                 for (int i = 0; i < groundTerrainTextures.Length; i++)
@@ -1859,7 +1929,21 @@ public class MapManager : MonoBehaviour
     #region Noise Map Generation
 
 
- 
+    public float FloraWaterCheck(int x, int y, float noiseValue)
+    {
+        float scale = (float)(heights.GetLength(0) - 1) / (float)terrain.terrainData.detailResolution;
+
+        if (heights[(int)(x * scale), (int)(y * scale)] <= waterLevel / terrain.terrainData.size.y)
+            noiseValue = 0;
+
+
+        // Avr out nearby heights 
+
+
+        return noiseValue;
+    }
+
+
 
     [ContextMenu("Generate Flora Map")]
     public void GenerateFloraMap()
@@ -1882,7 +1966,7 @@ public class MapManager : MonoBehaviour
         FloraNoiseData.texture = new Texture2D(alphaMapResolution, alphaMapResolution, TextureFormat.ARGB32, false);
 
         FloraNoiseData.heights = GetPerlinNoise(FloraNoiseData.heights, randX, randY, FloraNoiseData.scale, 
-                                                FloraNoiseData.noiseType, ref FloraNoiseData.texture ,CivilizationFloraWaterInteraction());
+                                                FloraNoiseData.noiseType);
 
 
         // Apply the changes to the texture
@@ -1989,6 +2073,7 @@ public class MapManager : MonoBehaviour
 
         terrainDetailToAlphaMapScale = t.alphamapResolution / t.detailResolution;
         float terrainDetailToFloraMapScale = FloraNoiseData.heights.GetLength(0) / t.detailResolution;
+        float detailToHeightScale = (float)heights.GetLength(0) / (float)t.detailResolution;
 
 
         for (int i = 0; i < floraTerrainDetailPrefabs.Length; i++)
@@ -2000,11 +2085,18 @@ public class MapManager : MonoBehaviour
             {
                 for (int y = 0; y < t.detailResolution; y++)
                 {
+                    #region Water Level Check
+                    if (heights[(int)(x* detailToHeightScale),(int)( y* detailToHeightScale)]*size.y < waterLevel)
+                    {
+                        continue;
+                    }
+                    #endregion
+
                     // READ READ READ >> This ASSUMES detail map is 4x smaller than alphamap, (ex. 1024x1024 to 4096x4096)
                     #region Scale X and Y of details to Alphamap
 
-                    int scaledX = (int)(x / terrainDetailToFloraMapScale);
-                    int scaledY = (int)(y / terrainDetailToFloraMapScale);
+                    int scaledX = Mathf.FloorToInt(x / terrainDetailToFloraMapScale);
+                    int scaledY = Mathf.FloorToInt(y / terrainDetailToFloraMapScale);
 
 
                     ////print("scaledX , scaledY  = " + scaledX  + ",  " + scaledY );
@@ -2030,15 +2122,15 @@ public class MapManager : MonoBehaviour
                     #endregion
 
 
-                    int roadScaledY = (int)((float)scaledY / roadOverlayScale);
-                    int roadScaledX = (int)((float)scaledX / roadOverlayScale);
+                    int roadScaledY = Mathf.FloorToInt((float)scaledY / roadOverlayScale);
+                    int roadScaledX = Mathf.FloorToInt((float)scaledX / roadOverlayScale);
 
 
                     #region Check if Position Overlaps Road
 
                     bool roadOverlap = false;
 
-                    if (roadOverlayingHeightsArray[roadScaledY, roadScaledX] > 0)
+                    if (roadOverlayingArray[roadScaledY, roadScaledX] == 3)
                         roadOverlap = true;
 
            
@@ -2205,10 +2297,21 @@ public class MapManager : MonoBehaviour
         List<TreeInstance> treeInstances = new List<TreeInstance>();
 
 
+        float sizeToRoadOverlayScale = (float)roadOverlayingHeightsArray.GetLength(0) / (float)t.size.x;
+        float detailToHeightScale = (float)heights.GetLength(0) / (float)t.detailResolution * (float)floraObjectResolutionScale;
+
+
         for (int x = 0; x < t.detailResolution /floraObjectResolutionScale;  x++)
         {
             for (int y = 0; y < t.detailResolution / floraObjectResolutionScale; y++)
             {
+                #region Water Level Check
+                if (heights[(int)(x * detailToHeightScale), (int)(y * detailToHeightScale)] * size.y < waterLevel)
+                {
+                    continue;
+                }
+                #endregion
+
                 #region Scale Flora Noise to Flora Object Resolution 
 
                 float noiseValue = FloraNoiseData.heights[x, y];
@@ -2306,34 +2409,27 @@ public class MapManager : MonoBehaviour
                            terrainHeight, randomX * terrain.terrainData.size.x);
 
 
-                        for (int j = 0; j < 100; j++)
+
+
+                        Vector2 roadOverlayPosition = new Vector2(truePosition.x * sizeToRoadOverlayScale, truePosition.z * sizeToRoadOverlayScale);
+
+                        int roadX = Mathf.FloorToInt(roadOverlayPosition.x);
+                        int roadY = Mathf.FloorToInt(roadOverlayPosition.y);
+
+
+                        if (roadOverlayingArray[roadX, roadY] >= 2 )
                         {
-                            Vector3 roadSplinePointPosition = roadSplineContainer.Spline.EvaluatePosition((float)j / 100);
-
-
-                            //if(x<10 && y<10 && j<20)
-                            //{
-                            //    //print("roadSplinePointPosition = " + roadSplinePointPosition);
-                            //    //print("truePosition = " + truePosition);
-                            //    //print("(roadSplinePointPosition - truePosition).magnitude = " + (roadSplinePointPosition - truePosition).magnitude);
-                            //}
-
-                            if ((roadSplinePointPosition - truePosition).magnitude <= roadPadding)
-                            {
-                                roadOverlap = true;
-                                continue;
-                            }
-
+                            roadOverlap = true;
                         }
+
 
                         if (roadOverlap)
                         {
-                            civilizationObjectNoiseValue = 0;
+                            floraObjectNoiseValue = 0;
                             continue;
                         }
 
                         #endregion
-
 
                         float size = AdjustValueToCurve(noiseValue, floraObjectsSizeCurve[selectedObjectIndex], true);
 
@@ -2440,10 +2536,14 @@ public class MapManager : MonoBehaviour
         //    randX, randY, CivilizationNoise.scale, CivilizationNoise.noiseType,
         //    ref CivilizationNoise.texture);
 
-        CivilizationNoise.heights = GetPerlinNoise_Compare(CivilizationNoise.heights,
-            randX, randY, CivilizationNoise.scale, CivilizationNoise.noiseType,
-            ref CivilizationNoise.texture, FloraNoiseData.heights, CivilizationFloraWaterInteraction);
+        //CivilizationNoise.heights = GetPerlinNoise_Compare(CivilizationNoise.heights,
+        //    randX, randY, CivilizationNoise.scale, CivilizationNoise.noiseType,
+        //    ref CivilizationNoise.texture, FloraNoiseData.heights, CivilizationFloraWaterInteraction);
 
+
+        CivilizationNoise.heights = GetPerlinNoise(CivilizationNoise.heights,
+            randX, randY, CivilizationNoise.scale, CivilizationNoise.noiseType,
+            ref CivilizationNoise.texture);
         //CivilizationNoise.texture = XizukiMethods.Textures.Xi_Helper_Texture.AdjustContrast(CivilizationNoise.texture, CivilizationNoise.contrast);
     }
 
@@ -2593,10 +2693,22 @@ public class MapManager : MonoBehaviour
         List<TreeInstance> treeInstances = new List<TreeInstance>();
 
 
+        float sizeToRoadOverlayScale = (float)roadOverlayingHeightsArray.GetLength(0) / (float)t.size.x;
+        float detailToHeightScale = (float)heights.GetLength(0) / (float)t.detailResolution * (float)civilizationObjectResolutionScale;
+
+
+
         for (int x = 0; x < t.detailResolution / civilizationObjectResolutionScale; x++)
         {
             for (int y = 0; y < t.detailResolution / civilizationObjectResolutionScale; y++)
             {
+                #region Water Level Check
+                if (heights[(int)(x * detailToHeightScale), (int)(y * detailToHeightScale)] * size.y < waterLevel + waterBuffer)
+                {
+                    continue;
+                }
+                #endregion
+
                 #region Scale civilization Noise to civilization Object Resolution 
 
                 float noiseValue = CivilizationNoise.heights[x, y];
@@ -2614,7 +2726,7 @@ public class MapManager : MonoBehaviour
                 noiseValue = sum / (civilizationObjectResolutionScale * civilizationObjectResolutionScale);
 
                 #endregion
-
+ 
 
                 float civilizationObjectNoiseValue = noiseValue * civilizationNoisePeakValue;
 
@@ -2623,8 +2735,6 @@ public class MapManager : MonoBehaviour
 
                 int overlaps = 0;
 
-
-                int test = 0;
                 while (civilizationObjectNoiseValue > civilizationObjects[0].valueCost)
                 {
                     #region Select civilization Object to Spawn
@@ -2669,7 +2779,7 @@ public class MapManager : MonoBehaviour
                                                         ((float)x + 1) * civilizationObjectResolutionScale / CivilizationNoise.heights.GetLength(0));
                     float randomZ = UnityEngine.Random.Range((float)y * civilizationObjectResolutionScale / CivilizationNoise.heights.GetLength(1),
                                                         ((float)y + 1) * civilizationObjectResolutionScale / CivilizationNoise.heights.GetLength(1));
-                        
+
 
 
                     #region Spawn civilization Object
@@ -2698,26 +2808,20 @@ public class MapManager : MonoBehaviour
                         Vector3 truePosition = new Vector3(randomZ * terrain.terrainData.size.z,
                            terrainHeight, randomX * terrain.terrainData.size.x);
 
-                    
-                        for (int j = 0; j < 100; j++)
+
+
+
+                        Vector2 roadOverlayPosition = new Vector2(truePosition.x * sizeToRoadOverlayScale, truePosition.z * sizeToRoadOverlayScale);
+
+                        int roadX = Mathf.FloorToInt(roadOverlayPosition.x);
+                        int roadY = Mathf.FloorToInt(roadOverlayPosition.y);
+
+
+                        if (roadOverlayingArray[roadX, roadY] >= 1)
                         {
-                            Vector3 roadSplinePointPosition = roadSplineContainer.Spline.EvaluatePosition((float)j / 100);
-
-
-                            //if(x<10 && y<10 && j<20)
-                            //{
-                            //    //print("roadSplinePointPosition = " + roadSplinePointPosition);
-                            //    //print("truePosition = " + truePosition);
-                            //    //print("(roadSplinePointPosition - truePosition).magnitude = " + (roadSplinePointPosition - truePosition).magnitude);
-                            //}
-
-                            if ((roadSplinePointPosition - truePosition).magnitude <= roadPadding)
-                            {
-                                roadOverlap = true;
-                                continue;
-                            }
-
+                            roadOverlap = true;
                         }
+                       
 
                         if (roadOverlap)
                         {
@@ -2725,10 +2829,11 @@ public class MapManager : MonoBehaviour
                             continue;
                         }
 
-                        float size = 0.01f;//AdjustValueToCurve(noiseValue, civilizationObjectsSizeCurve[selectedObjectIndex], true);
+                        float size = 0.2f;//AdjustValueToCurve(noiseValue, civilizationObjectsSizeCurve[selectedObjectIndex], true);
 
                         if (size > 0f)
                         {
+
                             treeInstances.Add(new TreeInstance
                             {
                                 position = treePosition,
