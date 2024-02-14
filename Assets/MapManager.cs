@@ -347,7 +347,7 @@ public class MapManager : MonoBehaviour
     public GameObject debugGO1;
     public GameObject debugGO2;
     public bool spawnRoadCubes;
-    List<GameObject> heightPoints = new List<GameObject>();
+    //List<GameObject> heightPoints = new List<GameObject>();
 
     [ContextMenu("RoadTest")]
     public void RoadTest()
