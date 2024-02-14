@@ -3,6 +3,14 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Splines;
 
+
+public struct MapPreset
+{
+
+}
+
+
+
 public class MapRandomizer : MonoBehaviour
 {
     public SplineContainer[] roadSplineReferences;

@@ -18,6 +18,7 @@ using Newtonsoft.Json.Linq;
 using JetBrains.Annotations;
 using System.Diagnostics;
 using Unity.Burst;
+using TMPro;
 
 #region Enums
 public enum Civilization { Wild, Rural, Suburbs, Urban}
@@ -280,6 +281,7 @@ public class MapManager : MonoBehaviour
         return null;
     }
 
+    public TMP_Text timeText;
 
     [ContextMenu("Generate Map")]
     public void GenerateMap()
@@ -340,6 +342,8 @@ public class MapManager : MonoBehaviour
 
         stopwatch.Stop();
         print($"GenerateMap() took {stopwatch.Elapsed.TotalSeconds} seconds to run.");
+
+        timeText.text = ""+stopwatch.Elapsed.TotalSeconds;
     }
 
     public GameObject debugParent;
