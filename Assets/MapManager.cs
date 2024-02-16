@@ -112,13 +112,13 @@ public class MapManager : MonoBehaviour
 
     [Header("Terrain Variables")]
     public NoiseData[] TerrainNoiseDatas;
-    public NoiseData[] TextureNoiseDatas;
+    //public NoiseData[] TextureNoiseDatas;
 
     public Vector3 size;
 
     public Mesh groundPlaneMesh;
 
-    public RoadPattern roadPattern;
+    //public RoadPattern roadPattern;
 
     public int landChunksMin;
     public int landChunksMax;
@@ -128,23 +128,17 @@ public class MapManager : MonoBehaviour
     public TerrainTexture[] groundTerrainTextures;
     public AnimationCurve[] groundTextureCurveDistribution;
 
-    [Header("Water Variables")]
-    [TooltipAttribute("Type of Water Body")]
-    public WaterBody waterBody;
-    [TooltipAttribute("What Height Value means underwater")]
-    public float waterLevel;
-    [TooltipAttribute("buffer for objects that spawn inaccurately")]
-    public float waterBuffer;
+
 
     public float waterFloraBuffer;
 
 
-    [TooltipAttribute("% Amount of Total Area Underwater")]
-    public float waterAmount;
+    //[TooltipAttribute("% Amount of Total Area Underwater")]
+    //public float waterAmount;
     public float roadSplineLowestPoint;
 
-    [TooltipAttribute("0 - 1, 1 for 100% chance of water")]
-    public float waterChance;
+    //[TooltipAttribute("0 - 1, 1 for 100% chance of water")]
+    //public float waterChance;
 
 
 
@@ -190,12 +184,9 @@ public class MapManager : MonoBehaviour
     [Header("GameObjects")]
     public Terrain terrain;
 
-    [Header("Prefabs")]
-    public GameObject WaterGO;
-    public GameObject WaterPrefab1;
-    public GameObject WaterPrefab2;
-    public GameObject WaterPrefab3;
+ 
 
+    [Header("Tunnel Variables")]
     public GameObject tunnelEntranceGO;
     public GameObject tunnelExitGO;
     public GameObject tunnelEntrancePrefab;
@@ -237,7 +228,7 @@ public class MapManager : MonoBehaviour
 
     // Get current heightmap data
     public float[,] heights;
-    public int[,] heightsChunks;
+    //public int[,] heightsChunks;
 
     public int terrainsize;
 
@@ -265,7 +256,6 @@ public class MapManager : MonoBehaviour
 
 
 
-    [ContextMenu("GenerateMapAsync")]
     public void GenerateMapAsync2()
     {
         StartCoroutine(GenerateMapAsync());
@@ -676,18 +666,18 @@ public class MapManager : MonoBehaviour
         heights = terrainData.GetHeights(0, 0, heightmapWidth, heightmapHeight);
 
 
-        heightsChunks = new int[heights.GetLength(0), heights.GetLength(1)];
+        //heightsChunks = new int[heights.GetLength(0), heights.GetLength(1)];
 
-        for (int i = 0; i < heightmapWidth; i++)
-        {
-            for (int j = 0; j < heightmapHeight; j++)
-            {
+        //for (int i = 0; i < heightmapWidth; i++)
+        //{
+        //    for (int j = 0; j < heightmapHeight; j++)
+        //    {
 
-                // Modify the height (you can adjust this value)
-                heights[i, j] = 0;
-                heightsChunks[i, j] = -1;
-            }
-        }
+        //        // Modify the height (you can adjust this value)
+        //        heights[i, j] = 0;
+        //        heightsChunks[i, j] = -1;
+        //    }
+        //}
 
 
         // Apply modified heights to the terrain
@@ -1464,14 +1454,34 @@ public class MapManager : MonoBehaviour
 
     #region Water Scripts
 
+
+    [Header("Water Variables")]
+    public GameObject waterGO;
+    public GameObject waterPrefab;
+    public float waterVariance;
+    public bool hasWater;
+
+    [TooltipAttribute("What Height Value means underwater")]
+    public float waterLevel;
+    [TooltipAttribute("buffer for objects that spawn inaccurately")]
+    public float waterBuffer;
+
     [ContextMenu("Generate Water")]
     public void GenerateWater()
     {
-        // ADD IN LOGIC FOR WATER HEIGHT
+        if (waterGO)
+        {
+            DestroyImmediate(waterGO);
+        }
 
-        waterLevel = UnityEngine.Random.Range(roadSplineLowestPoint, roadSplineLowestPoint);
-        WaterGO.transform.transform.position = new Vector3(0, waterLevel, 0);
-        WaterGO.transform.transform.localScale = new Vector3(size.x, 1, size.z) * 5f;
+        if (!hasWater) return;
+
+        waterLevel = UnityEngine.Random.Range(
+            roadSplineLowestPoint- (roadSplineLowestPoint*waterVariance), roadSplineLowestPoint);
+        waterGO = GameObject.Instantiate(waterPrefab);
+        waterGO.transform.parent = transform;
+        waterGO.transform.transform.position = new Vector3(0, waterLevel, 0);
+        waterGO.transform.transform.localScale = new Vector3(size.x, 1, size.z) * 5f;
     }
 
     #endregion
@@ -1916,14 +1926,14 @@ public class MapManager : MonoBehaviour
     public AnimationCurve[] floraObjectsCurveDistribution;
 
 
-    public float totalFloraObjectValues;
+    //public float totalFloraObjectValues;
     public float floraNoisePeakValue;
     public Color floraColor;
     [SerializeField]
     public NoiseData FloraNoiseData;
-    public float floraLevel;
-    public float floraRange;
-    public Vector2 floraGrassHeightRange;
+    //public float floraLevel;
+    //public float floraRange;
+    //public Vector2 floraGrassHeightRange;
     public float floraDrawDistance;
     public float floraDensity;
     public int floraObjectResolutionScale;
@@ -2165,20 +2175,6 @@ public class MapManager : MonoBehaviour
 
   
     #endregion
-
-    //[ContextMenu("GetClampedDetailPatches")]
-    //public void GetClampedDetailPatches()
-    //{
-    //    //print("======================== GetClampedDetailPatches ======================== ");
-
-    //    Vector2Int[] arr = terrain.terrainData.GetClampedDetailPatches(1);
-
-    //    foreach(Vector2Int p in arr) 
-    //    {
-    //        //print("GetClampedDetailPatches = " + p);
-    //    }
-
-    //}
 
 
     #region Pre - Add Flora Objects to Terrain 
@@ -2487,7 +2483,6 @@ public class MapManager : MonoBehaviour
 
 
     [Header("Civilization Variables")]
-    [SerializeField]
     public float CivilizationToTerrainDetailMapScale;
     [SerializeField]
     public NoiseData CivilizationNoise;
@@ -2501,9 +2496,9 @@ public class MapManager : MonoBehaviour
 
     //public List<Vector2> hotSpots;
     //public List<float> hotSpotValues;
-    public NoiseData CityMap;
-    public GameObject CivilizationTestPrefab;
-    public TerrainDetailPrefab[] civlizationTestPrefab;
+    //public NoiseData CityMap;
+    //public GameObject CivilizationTestPrefab;
+    //public TerrainDetailPrefab[] civlizationTestPrefab;
     public float civilizationObjectNoiseValue;
 
     
@@ -2546,12 +2541,11 @@ public class MapManager : MonoBehaviour
 
 
         CivilizationNoise.heights = GetPerlinNoise(CivilizationNoise.heights,
-            randX, randY, CivilizationNoise.scale, CivilizationNoise.noiseType,
-            ref CivilizationNoise.texture);
+            randX, randY, CivilizationNoise.scale, CivilizationNoise.noiseType);
         //CivilizationNoise.texture = XizukiMethods.Textures.Xi_Helper_Texture.AdjustContrast(CivilizationNoise.texture, CivilizationNoise.contrast);
     }
 
-
+    #region OLD CivilizationHotSpotsCheck
     public void CivilizationHotSpotsCheck(float noiseValue, Vector2 pos)
     {
         bool hasHigherValue = false;
@@ -2585,11 +2579,10 @@ public class MapManager : MonoBehaviour
 
         //}
     }
+    #endregion
 
 
-
-
-
+    #region OLD 
 
     public float CivilizationFloraWaterInteraction(int x, int y, float CivilizationPixelNoiseValue, float[,] floraNoise)
     {
@@ -2639,7 +2632,7 @@ public class MapManager : MonoBehaviour
        
     }
 
-
+    #endregion
 
 
 
