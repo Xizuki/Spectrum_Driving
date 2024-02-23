@@ -19,6 +19,7 @@ using JetBrains.Annotations;
 using System.Diagnostics;
 using Unity.Burst;
 using TMPro;
+using UnityEngine.SceneManagement;
 
 #region Enums
 public enum Civilization { Wild, Rural, Suburbs, Urban}
@@ -211,12 +212,27 @@ public class MapManager : MonoBehaviour
         XizukiMethods.GameObjects.Xi_Helper_GameObjects.MonoInitialization<MapManager>(ref Instance, this);
 
         // Measure the time taken by GenerateMap method
-      
+
+        GetComponent<MapRandomizer>().Randomize();
+
 
         GenerateMap();
 
     }
 
+
+    public void LoadScene()
+    {
+        SceneManager.LoadScene(0);
+    }
+
+    public void RandomGenerate()
+    {
+        GetComponent<MapRandomizer>().Randomize();
+
+
+        GenerateMap();
+    }
    
 
 
@@ -1311,6 +1327,7 @@ public class MapManager : MonoBehaviour
         float[] result = new float[values.Length];
         float totalValue = 0;
 
+
         for (int i = 0; i < values.Length; i++)
         {
             if (values[i] < 0) { values[i] = 0; }
@@ -1379,24 +1396,29 @@ public class MapManager : MonoBehaviour
                 }
 
 
+
+
                 
-               floraValues = NormalizeArrayValues(floraValues);
+                floraValues = NormalizeArrayValues(floraValues);
+
 
                 float waterGroundDiff = waterLevel - heights[Mathf.RoundToInt(x / terrainAlphaScale), Mathf.RoundToInt(z / terrainAlphaScale)] * size.y;
                 //                float waterGroundDiff = waterLevel - terrain.SampleHeight(new Vector3(z*size.z/ alphaMapResolution, 0,x* size.x / alphaMapResolution));
 
                 float groundFloraPercent = 1;
-
-                if (waterGroundDiff > 0)
+                if (hasWater)
                 {
-                    waterGroundDiff = waterLevel - terrain.SampleHeight(new Vector3(z * size.z / alphaMapResolution, 0, x * size.x / alphaMapResolution));
-
                     if (waterGroundDiff > 0)
                     {
-                        groundFloraPercent = (waterFloraBuffer - waterGroundDiff) / waterFloraBuffer;
-                    }
-                }
+                        waterGroundDiff = waterLevel - terrain.SampleHeight(new Vector3(z * size.z / alphaMapResolution, 0, x * size.x / alphaMapResolution));
 
+                        if (waterGroundDiff > 0)
+                        {
+                            groundFloraPercent = (waterFloraBuffer - waterGroundDiff) / waterFloraBuffer;
+                        }
+                    }
+
+                }
 
                 for (int i = 0; i < floraTerrainTextures.Length; i++)
                 {
@@ -2100,7 +2122,7 @@ public class MapManager : MonoBehaviour
                 for (int y = 0; y < t.detailResolution; y++)
                 {
                     #region Water Level Check
-                    if (heights[(int)(x* detailToHeightScale),(int)( y* detailToHeightScale)]*size.y < waterLevel)
+                    if (hasWater && heights[(int)(x* detailToHeightScale),(int)( y* detailToHeightScale)]*size.y < waterLevel)
                     {
                         continue;
                     }
@@ -2144,7 +2166,7 @@ public class MapManager : MonoBehaviour
 
                     bool roadOverlap = false;
 
-                    if (roadOverlayingArray[roadScaledY, roadScaledX] == 3)
+                    if (roadOverlayingArray[roadScaledY, roadScaledX] >= 2)
                         roadOverlap = true;
 
            
@@ -2306,7 +2328,7 @@ public class MapManager : MonoBehaviour
             for (int y = 0; y < t.detailResolution / floraObjectResolutionScale; y++)
             {
                 #region Water Level Check
-                if (heights[(int)(x * detailToHeightScale), (int)(y * detailToHeightScale)] * size.y < waterLevel)
+                if (hasWater && heights[(int)(x * detailToHeightScale), (int)(y * detailToHeightScale)] * size.y < waterLevel)
                 {
                     continue;
                 }
@@ -2693,6 +2715,7 @@ public class MapManager : MonoBehaviour
         float sizeToRoadOverlayScale = (float)roadOverlayingHeightsArray.GetLength(0) / (float)t.size.x;
         float detailToHeightScale = (float)heights.GetLength(0) / (float)t.detailResolution * (float)civilizationObjectResolutionScale;
 
+        int civilizationNoiseResolution = CivilizationNoise.heights.GetLength(0);
 
 
         for (int x = 0; x < t.detailResolution / civilizationObjectResolutionScale; x++)
@@ -2700,7 +2723,7 @@ public class MapManager : MonoBehaviour
             for (int y = 0; y < t.detailResolution / civilizationObjectResolutionScale; y++)
             {
                 #region Water Level Check
-                if (heights[(int)(x * detailToHeightScale), (int)(y * detailToHeightScale)] * size.y < waterLevel + waterBuffer)
+                if (hasWater && heights[(int)(x * detailToHeightScale), (int)(y * detailToHeightScale)] * size.y < waterLevel + waterBuffer)
                 {
                     continue;
                 }
@@ -2772,10 +2795,10 @@ public class MapManager : MonoBehaviour
 
 
 
-                    float randomX = UnityEngine.Random.Range((float)x * civilizationObjectResolutionScale / CivilizationNoise.heights.GetLength(0),
-                                                        ((float)x + 1) * civilizationObjectResolutionScale / CivilizationNoise.heights.GetLength(0));
-                    float randomZ = UnityEngine.Random.Range((float)y * civilizationObjectResolutionScale / CivilizationNoise.heights.GetLength(1),
-                                                        ((float)y + 1) * civilizationObjectResolutionScale / CivilizationNoise.heights.GetLength(1));
+                    float randomX = UnityEngine.Random.Range((float)x * civilizationObjectResolutionScale / civilizationNoiseResolution,
+                                                        ((float)x + 1) * civilizationObjectResolutionScale / civilizationNoiseResolution);
+                    float randomZ = UnityEngine.Random.Range((float)y * civilizationObjectResolutionScale / civilizationNoiseResolution,
+                                                        ((float)y + 1) * civilizationObjectResolutionScale / civilizationNoiseResolution);
 
 
 
