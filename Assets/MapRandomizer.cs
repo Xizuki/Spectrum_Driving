@@ -149,7 +149,7 @@ public class MapRandomizer : MonoBehaviour
         selectedMapPreset = Random.Range(0, presets.Length);
 
 
-        AssingSpecificVariables();
+        RandomizeMapManagerDebugPreset();
     }
 
     private void Start()
@@ -311,6 +311,101 @@ public class MapRandomizer : MonoBehaviour
         public int civilizationObjectsCurveDistribution;
 
         public int civilizationNoisePeakValue;
+    }
+
+
+
+
+    [ContextMenu("Randomize Map Manager Preset")]
+    public void RandomizeMapManagerDebugPreset()
+    {
+
+        int index = Random.Range(0, roadSplineReferences.Length);
+        mapManager.roadSplinePrefabGO = roadSplineReferences[index];
+
+
+        index = Random.Range(0, waterPrefabs.Length);
+        mapManager.waterPrefab = waterPrefabs[index];
+
+
+
+        index = Random.Range(0, floraNoiseDetails.Length);
+        mapManager.FloraNoiseData = floraNoiseDetails[index].noise;
+        mapManager.floraObjectResolutionScale = floraNoiseDetails[index].objectResolution;
+
+
+
+        index = Random.Range(0, civilizationNoiseDetails.Length);
+        mapManager.CivilizationNoise = floraNoiseDetails[index].noise;
+        mapManager.civilizationObjectResolutionScale = civilizationNoiseDetails[index].objectResolution;
+
+
+        int mapPresetIndex = selectedMapPreset;
+
+        mapManager.hasWater = presets[mapPresetIndex].hasWater;
+
+
+        index = Random.Range(0, presets[mapPresetIndex].terrainPresets.Length);
+
+        int value = presets[mapPresetIndex].terrainPresets[index];
+
+        mapManager.TerrainNoiseDatas = terrainPresets[value].noises;
+
+        float terrainHeight = Random.Range(terrainPresets[value].terrainHeight[0], terrainPresets[value].terrainHeight[1]);
+
+        mapManager.size = new Vector3(mapManager.size.x, terrainHeight, mapManager.size.z);
+
+        mapManager.waterVariance = terrainPresets[value].waterVariance;
+
+
+
+
+        index = Random.Range(0, presets[mapPresetIndex].floraPresets.Length);
+
+        value = presets[mapPresetIndex].floraPresets[index];
+
+        mapManager.floraTerrainDetailPrefabs = floraPresets[value].floraTerrainDetailPrefabs;
+
+        mapManager.floraDetailsCurveDistribution = floraPresets[value].floraDetailsCurveDistribution;
+
+        mapManager.floraTerrainTextures = floraPresets[value].floraTerrainTextures;
+
+        mapManager.floraTextureCurveDistribution = floraPresets[value].floraTextureCurveDistribution;
+
+        mapManager.useFloraColor4Textures = floraPresets[value].useFloraColor4Textures;
+
+        mapManager.floraObjects = floraPresets[value].floraObjects;
+
+
+        mapManager.floraObjectsSizeCurve = floraPresets[value].floraObjectsSizeCurve;
+
+        mapManager.floraObjectsCurveDistribution = floraPresets[value].floraObjectsCurveDistribution;
+
+        mapManager.floraNoisePeakValue = floraPresets[value].floraNoisePeakValue;
+
+        mapManager.floraColor = floraPresets[value].floraColor;
+
+
+
+
+
+        index = Random.Range(0, presets[mapPresetIndex].civilizationPresets.Length);
+
+        value = presets[mapPresetIndex].civilizationPresets[index];
+
+
+        mapManager.civilizationObjects = civilizationPresets[value].civilizationObjects;
+        mapManager.civilizationObjectsCurveDistribution = civilizationPresets[value].civilizationObjectsCurveDistribution;
+
+        mapManager.civilizationNoisePeakValue = civilizationPresets[value].civilizationNoisePeakValue;
+
+
+        ;
+
+
+        index = Random.Range(0, presets[mapPresetIndex].skyboxes.Length);
+        value = presets[mapPresetIndex].skyboxes[index];
+        RenderSettings.skybox = skyboxes[value];
     }
 
 

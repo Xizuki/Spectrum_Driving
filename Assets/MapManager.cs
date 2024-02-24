@@ -223,7 +223,9 @@ public class MapManager : MonoBehaviour
 
     public void LoadScene()
     {
-        SceneManager.LoadScene(0);
+        GetComponent<MapRandomizer>().RandomizeMapManagerDebugPreset();
+        GenerateMap();
+        //SceneManager.LoadScene(0);
     }
 
     public void RandomGenerate()
