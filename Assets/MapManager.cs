@@ -213,18 +213,30 @@ public class MapManager : MonoBehaviour
 
         // Measure the time taken by GenerateMap method
 
-        GetComponent<MapRandomizer>().Randomize();
+        //GetComponent<MapRandomizer>().Randomize();
 
-
+        int randomIndex = UnityEngine.Random.Range(0, GetComponent<MapRandomizer>().presets.Length);
+        //GetComponent<MapRandomizer>().defaultEmptyTerrain = terrain.terrainData;
+        //GetComponent<MapRandomizer>().ResetTerrain();
+        GetComponent<MapRandomizer>().selectedMapPreset = randomIndex;
+        GetComponent<MapRandomizer>().RandomizeMapManagerDebugPreset();
         GenerateMap();
 
+        //GenerateMap();
+        //LoadScene();
     }
 
 
     public void LoadScene()
     {
+        int randomIndex = UnityEngine.Random.Range(0, GetComponent<MapRandomizer>().presets.Length);
+        //GetComponent<MapRandomizer>().defaultEmptyTerrain = terrain.terrainData;
+        //GetComponent<MapRandomizer>().ResetTerrain();
+        GetComponent<MapRandomizer>().selectedMapPreset = randomIndex;
         GetComponent<MapRandomizer>().RandomizeMapManagerDebugPreset();
+
         GenerateMap();
+
         //SceneManager.LoadScene(0);
     }
 
@@ -2051,7 +2063,16 @@ public class MapManager : MonoBehaviour
         for (int i = 0; i < floraTerrainDetailPrefabs.Length; i++)
         {
             TerrainDetailPrefab detail = floraTerrainDetailPrefabs[i];
-            floraTerrainDetailPrefabs[i].index = i;
+            //new TerrainDetailPrefab
+            //{
+            //    widthRange = floraTerrainDetailPrefabs[i].widthRange,
+            //    maxAmount = floraTerrainDetailPrefabs[i].maxAmount,
+            //    detailDensity = floraTerrainDetailPrefabs[i].detailDensity,
+            //    GameObject = floraTerrainDetailPrefabs[i].GameObject,
+            //     heightRange = floraTerrainDetailPrefabs[i].heightRange,
+            //      inverse = floraTerrainDetailPrefabs[i].inverse
+            //};
+            //floraTerrainDetailPrefabs[i].index = i;
 
 
 
@@ -2080,12 +2101,13 @@ public class MapManager : MonoBehaviour
 
             newDetails.Add(new DetailPrototype());
 
-            //newDetails[i].prototypeTexture = detail.texture;
+            ////newDetails[i].prototypeTexture = detail.texture;
             newDetails[i].prototype = detail.GameObject[0];
             newDetails[i].usePrototypeMesh = true;
             newDetails[i].useInstancing = true;
-            newDetails[i].renderMode = DetailRenderMode.VertexLit;
 
+            newDetails[i].renderMode = DetailRenderMode.VertexLit;
+           
             newDetails[i].density = detail.detailDensity;
 
             newDetails[i].minHeight = detail.heightRange[0];

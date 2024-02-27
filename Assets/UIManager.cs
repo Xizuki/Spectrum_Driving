@@ -19,6 +19,8 @@ public class UIManager : MonoBehaviour
 
     public Slider progressionUI;
 
+    public GameObject loadingScreenUI;
+
     [ContextMenu("RandomizeMap()")]
     public void RandomizeMap()
     {

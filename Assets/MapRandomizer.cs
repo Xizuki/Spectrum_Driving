@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using Unity.Burst.CompilerServices;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.TerrainTools;
 
@@ -90,13 +91,14 @@ public struct CivilizationPresets
 [RequireComponent (typeof (MapManager))]
 public class MapRandomizer : MonoBehaviour
 {
+    public TerrainData defaultEmptyTerrain;
     public MapManager mapManager;
 
     public int selectedMapPreset;
 
 
     [SerializeField]
-    MapPreset[] presets;
+    public MapPreset[] presets;
 
     public GameObject[] roadSplineReferences;
 
@@ -136,7 +138,7 @@ public class MapRandomizer : MonoBehaviour
     void Awake()
     {
         mapManager = GetComponent<MapManager>();
-
+        defaultEmptyTerrain = mapManager.terrain.terrainData;
 
     }
 
@@ -330,13 +332,16 @@ public class MapRandomizer : MonoBehaviour
 
 
         index = Random.Range(0, floraNoiseDetails.Length);
-        mapManager.FloraNoiseData = floraNoiseDetails[index].noise;
+        NoiseData newNoise = floraNoiseDetails[index].noise;
+        mapManager.FloraNoiseData = newNoise;
         mapManager.floraObjectResolutionScale = floraNoiseDetails[index].objectResolution;
 
 
 
         index = Random.Range(0, civilizationNoiseDetails.Length);
-        mapManager.CivilizationNoise = floraNoiseDetails[index].noise;
+
+        newNoise = civilizationNoiseDetails[index].noise;
+        mapManager.CivilizationNoise = newNoise;
         mapManager.civilizationObjectResolutionScale = civilizationNoiseDetails[index].objectResolution;
 
 
@@ -349,7 +354,7 @@ public class MapRandomizer : MonoBehaviour
 
         int value = presets[mapPresetIndex].terrainPresets[index];
 
-        mapManager.TerrainNoiseDatas = terrainPresets[value].noises;
+        mapManager.TerrainNoiseDatas = (NoiseData[])terrainPresets[value].noises.Clone();
 
         float terrainHeight = Random.Range(terrainPresets[value].terrainHeight[0], terrainPresets[value].terrainHeight[1]);
 
@@ -364,18 +369,49 @@ public class MapRandomizer : MonoBehaviour
 
         value = presets[mapPresetIndex].floraPresets[index];
 
-        mapManager.floraTerrainDetailPrefabs = floraPresets[value].floraTerrainDetailPrefabs;
+
+        List<TerrainDetailPrefab> terrainDetailPrefabs = new List<TerrainDetailPrefab>();
+
+        for (int i = 0; i < floraPresets[value].floraTerrainDetailPrefabs.Length; i++)
+        {
+            TerrainDetailPrefab detail = new TerrainDetailPrefab
+            { 
+                detailDensity = floraPresets[value].floraTerrainDetailPrefabs[i].detailDensity,
+                GameObject = floraPresets[value].floraTerrainDetailPrefabs[i].GameObject,
+                heightRange = floraPresets[value].floraTerrainDetailPrefabs[i].heightRange,
+                inverse = floraPresets[value].floraTerrainDetailPrefabs[i].inverse,
+                maxAmount = floraPresets[value].floraTerrainDetailPrefabs[i].maxAmount,
+                widthRange = floraPresets[value].floraTerrainDetailPrefabs[i].widthRange
+            };
+
+            terrainDetailPrefabs.Add(detail);
+        }
+        
+        mapManager.floraTerrainDetailPrefabs = terrainDetailPrefabs.ToArray();
+        //mapManager.floraTerrainDetailPrefabs[0].id = "123456";
+
+        mapManager.floraTerrainDetailPrefabs = (TerrainDetailPrefab[])floraPresets[value].floraTerrainDetailPrefabs.Clone();
+
+        mapManager.floraTerrainDetailPrefabs[0].id = "12345";
+
+        for (int i = 0; i < mapManager.floraTerrainDetailPrefabs.Length; i++)
+        {
+            mapManager.floraTerrainDetailPrefabs[i].index = 0;
+        }
 
         mapManager.floraDetailsCurveDistribution = floraPresets[value].floraDetailsCurveDistribution;
 
-        mapManager.floraTerrainTextures = floraPresets[value].floraTerrainTextures;
+        mapManager.floraTerrainTextures = (TerrainTexture[])floraPresets[value].floraTerrainTextures.Clone();
 
         mapManager.floraTextureCurveDistribution = floraPresets[value].floraTextureCurveDistribution;
 
         mapManager.useFloraColor4Textures = floraPresets[value].useFloraColor4Textures;
 
-        mapManager.floraObjects = floraPresets[value].floraObjects;
-
+        mapManager.floraObjects = (TerrainObject[])floraPresets[value].floraObjects.Clone();
+        for (int i = 0; i < mapManager.floraObjects.Length; i++)
+        {
+            mapManager.floraObjects[i].index = 0;
+        }
 
         mapManager.floraObjectsSizeCurve = floraPresets[value].floraObjectsSizeCurve;
 
@@ -394,13 +430,19 @@ public class MapRandomizer : MonoBehaviour
         value = presets[mapPresetIndex].civilizationPresets[index];
 
 
-        mapManager.civilizationObjects = civilizationPresets[value].civilizationObjects;
+        mapManager.civilizationObjects = (TerrainObject[])civilizationPresets[value].civilizationObjects.Clone();
+        for (int i = 0; i < mapManager.civilizationObjects.Length; i++)
+        {
+            mapManager.civilizationObjects[i].index = 0;
+        }
+
+
         mapManager.civilizationObjectsCurveDistribution = civilizationPresets[value].civilizationObjectsCurveDistribution;
 
         mapManager.civilizationNoisePeakValue = civilizationPresets[value].civilizationNoisePeakValue;
 
 
-        ;
+
 
 
         index = Random.Range(0, presets[mapPresetIndex].skyboxes.Length);
@@ -409,6 +451,11 @@ public class MapRandomizer : MonoBehaviour
     }
 
 
+
+    public void ResetTerrain()
+    {
+        mapManager.terrain.terrainData = defaultEmptyTerrain;
+    }
 
 
     [ContextMenu("Randomize Map Manager")]
@@ -459,7 +506,7 @@ public class MapRandomizer : MonoBehaviour
 
         value = presets[mapPresetIndex].floraPresets[index];
 
-        mapManager.floraTerrainDetailPrefabs = floraPresets[value].floraTerrainDetailPrefabs;
+        mapManager.floraTerrainDetailPrefabs = (TerrainDetailPrefab[])floraPresets[value].floraTerrainDetailPrefabs.Clone();
 
         mapManager.floraDetailsCurveDistribution = floraPresets[value].floraDetailsCurveDistribution;
 
