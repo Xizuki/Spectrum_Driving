@@ -30,6 +30,26 @@ public class GameManager : MonoBehaviour
 
     public float obstacleDestroyDistance;
 
+
+    public IEnumerator LoadNewWorld()
+    {
+        UIManager.Instance.loadingScreenUI.SetActive(true);
+
+        yield return new WaitForSeconds(0.1f);
+
+        MapManager.Instance.LoadScene();
+
+
+        carScript.splineAnimate.NormalizedTime = 0;
+
+        yield return new WaitForSeconds(0.1f);
+
+        UIManager.Instance.loadingScreenUI.SetActive(false);
+
+    }
+
+
+
     // Start is called before the first frame update
     void Start()
     {
