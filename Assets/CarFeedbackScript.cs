@@ -156,11 +156,15 @@ public class CarFeedbackScript : MonoBehaviour
         bopParentalOffset.transform.localScale = baseScale+ (new Vector3(Mathf.Sin(bopT), Mathf.Cos(bopT + bopYOffset),0)/100)*bopAmount* eegRate;
     }
 
+
+    public Vector3 rotateAxis;
+
     public void AnimateWheels(float eegRate)
     {
         foreach (GameObject wheel in wheels)
         {
-            wheel.transform.eulerAngles += new Vector3(0, 0, eegRate* wheelSpeed) * Time.deltaTime;
+
+            wheel.transform.eulerAngles += new Vector3(rotateAxis.x * eegRate * wheelSpeed, rotateAxis.y * eegRate * wheelSpeed, rotateAxis.z* eegRate * wheelSpeed) * Time.deltaTime;
         }
     }
 }

@@ -24,6 +24,8 @@ public class CarUpgradesManager : MonoBehaviour
 
     [SerializeField]
     public GameObjectArray[] wheels;
+    public Vector3[] wheelsRotateAxis;
+
 
     public float transitionTime;
 
@@ -58,6 +60,8 @@ public class CarUpgradesManager : MonoBehaviour
         cars[currentCarIndex].SetActive(true);
 
         carScript.carFeedbackScript.wheels = wheels[currentCarIndex].gameobjects;
+        carScript.carFeedbackScript.rotateAxis = wheelsRotateAxis[currentCarIndex];
+
     }
 
     IEnumerator CarUpgradeVFX()

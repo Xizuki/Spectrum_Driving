@@ -75,7 +75,7 @@ public class CarScript : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(splineAnimate.NormalizedTime >= 0.9975)
+        if(splineAnimate.NormalizedTime >= 0.998)
         {
 
             StartCoroutine( GameManager.instance.LoadNewWorld());

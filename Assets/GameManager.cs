@@ -60,6 +60,7 @@ public class GameManager : MonoBehaviour
         camPivotOriginalPos = CameraPivot.transform.localEulerAngles;
 
 
+        MusicManager.instance.RandomizeMusic(ref carScript);
     }
 
     // Update is called once per frame
@@ -142,6 +143,8 @@ public class GameManager : MonoBehaviour
             uiManager.gameCanvas.SetActive(true);
             uiManager.intervalCanvas.SetActive(false);
             currentSession++;
+
+            MusicManager.instance.RandomizeMusic(ref carScript);
         }
         else if(state == GameState.Interval)
         {

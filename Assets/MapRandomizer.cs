@@ -2,7 +2,9 @@ using System.Collections.Generic;
 using Unity.Burst.CompilerServices;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.Splines;
 using UnityEngine.TerrainTools;
+using static UnityEngine.Splines.SplineInstantiate;
 
 [System.Serializable]
 public struct MapPreset
@@ -127,8 +129,7 @@ public class MapRandomizer : MonoBehaviour
     [SerializeField]
     public Material[] skyboxes;
 
-    public GameObject[] obstacles;
-
+    public SplineInstantiate[] roadObstacles;
 
     [SerializeField]
     public TerrainTexture[] groundTextures;
@@ -442,6 +443,11 @@ public class MapRandomizer : MonoBehaviour
         mapManager.civilizationNoisePeakValue = civilizationPresets[value].civilizationNoisePeakValue;
 
 
+
+
+        int randomObstacleIndex = Random.Range(0, presets[mapPresetIndex].obstacles.Length);
+        int obstacleIndex = presets[mapPresetIndex].obstacles[randomObstacleIndex];
+        ObstacleManager.instance.UpdateObstacles(roadObstacles[obstacleIndex]);
 
 
 

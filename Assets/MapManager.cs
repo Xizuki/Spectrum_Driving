@@ -53,7 +53,7 @@ public struct NoiseData
     public NoiseType noiseType;
 }
 
-#endregion
+#endregion  
 
 #region Struct ( Terrain Detail Prefab )
 [Serializable]

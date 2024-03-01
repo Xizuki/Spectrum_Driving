@@ -40,6 +40,12 @@ public class ObstacleManager : MonoBehaviour
     {
 
     }
+
+    public void UpdateObstacles(SplineInstantiate reference)
+    {
+        splineInstantiate = reference;
+    }
+
     [ContextMenu("GenerateObstacles")]
     public void GenerateObstaclesContextMenu()
     {
