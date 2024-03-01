@@ -43,7 +43,11 @@ public class ObstacleManager : MonoBehaviour
 
     public void UpdateObstacles(SplineInstantiate reference)
     {
+        splineInstantiate.enabled = false;
+
         splineInstantiate = reference;
+
+        splineInstantiate.enabled = true;
     }
 
     [ContextMenu("GenerateObstacles")]

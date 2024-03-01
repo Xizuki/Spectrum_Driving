@@ -2191,21 +2191,10 @@ public class MapManager : MonoBehaviour
 
                     bool roadOverlap = false;
 
-                    if (roadOverlayingArray[roadScaledY, roadScaledX] >= 2)
+                    if (roadOverlayingArray[roadScaledY, roadScaledX] > 0)
                         roadOverlap = true;
 
-           
-
-                    if (roadOverlap)
-                    {
-                        //print("grass overlapped");
-                        civilizationObjectNoiseValue = 0;
-                        noiseValue = 0;
-                        continue;
-                    }
-
-
-
+  
 
                     #endregion
 
@@ -2464,7 +2453,7 @@ public class MapManager : MonoBehaviour
                         int roadY = Mathf.FloorToInt(roadOverlayPosition.y);
 
 
-                        if (roadOverlayingArray[roadX, roadY] >= 2 )
+                        if (roadOverlayingArray[roadX, roadY] >= 1)
                         {
                             roadOverlap = true;
                         }
