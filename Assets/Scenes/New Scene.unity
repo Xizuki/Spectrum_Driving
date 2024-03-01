@@ -377,6 +377,7 @@ GameObject:
   - component: {fileID: 1595394768}
   - component: {fileID: 1595394767}
   - component: {fileID: 1595394766}
+  - component: {fileID: 1595394771}
   m_Layer: 0
   m_Name: Cube
   m_TagString: Untagged
@@ -486,6 +487,140 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1595394771
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1595394765}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7bb9aa4105dec5144a5ffdb8f0a12438, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  onUpdate: 0
+  car: {fileID: 0}
+  TerrainNoiseDatas: []
+  size: {x: 0, y: 0, z: 0}
+  groundPlaneMesh: {fileID: 0}
+  landChunksMin: 0
+  landChunksMax: 0
+  groundTerrainTextures: []
+  groundTextureCurveDistribution: []
+  waterFloraBuffer: 0
+  roadSplineLowestPoint: 0
+  rainAmount: 0
+  cloudAmount: 0
+  cloudClumping: 0
+  windLevel: 0
+  windDirection: {x: 0, y: 0}
+  civilization: 0
+  civilizationRange: 0
+  civilizationAmount: 0
+  rainLevel: 0
+  terrainMap: {fileID: 0}
+  rainMap: {fileID: 0}
+  structureMap: {fileID: 0}
+  roadSplineContainer: {fileID: 0}
+  splineExtrude: {fileID: 0}
+  terrain: {fileID: 0}
+  tunnelEntranceGO: {fileID: 0}
+  tunnelExitGO: {fileID: 0}
+  tunnelEntrancePrefab: {fileID: 0}
+  tunnelExitPrefab: {fileID: 0}
+  heightmapWidth: 0
+  heightmapHeight: 0
+  terrainsize: 0
+  entrancePosition: 
+  exitPosition: 
+  timeText: {fileID: 0}
+  debugParent: {fileID: 0}
+  debugGO: {fileID: 0}
+  debugGO1: {fileID: 0}
+  debugGO2: {fileID: 0}
+  spawnRoadCubes: 0
+  roadSplinePrefabGO: {fileID: 0}
+  roadSplineTerrainProjectionResolution: 0
+  roadPadding: 0
+  roadPrefabOriginalScale: 0
+  projectedRoadSpline:
+    m_EditModeType: 1
+    m_Knots: []
+    m_MetaData: []
+    m_Closed: 0
+    m_IntData:
+      m_Data: []
+    m_FloatData:
+      m_Data: []
+    m_Float4Data:
+      m_Data: []
+    m_ObjectData:
+      m_Data: []
+  referenceRoadSpline:
+    m_EditModeType: 1
+    m_Knots: []
+    m_MetaData: []
+    m_Closed: 0
+    m_IntData:
+      m_Data: []
+    m_FloatData:
+      m_Data: []
+    m_Float4Data:
+      m_Data: []
+    m_ObjectData:
+      m_Data: []
+  roadOverlayTerrainPadding: 0
+  roadOverlayScale: 0
+  roadOverlayTexture: {fileID: 0}
+  roadOverlayingHeightsTexture: {fileID: 0}
+  splineResolutionPositions: []
+  roadOverlayResolution: 0
+  waterGO: {fileID: 0}
+  waterPrefab: {fileID: 0}
+  waterVariance: 0
+  hasWater: 0
+  waterLevel: 0
+  waterBuffer: 0
+  floraTerrainDetailPrefabs: []
+  floraDetailsCurveDistribution: []
+  floraTerrainTextures: []
+  floraTextureCurveDistribution: []
+  useFloraColor4Textures: 
+  floraObjects: []
+  floraObjectsSizeCurve: []
+  floraObjectsCurveDistribution: []
+  floraNoisePeakValue: 0
+  floraColor: {r: 0, g: 0, b: 0, a: 0}
+  FloraNoiseData:
+    scale: 0
+    texture: {fileID: 0}
+    importance: 0
+    contrast: 0
+    trimDir: 0
+    trimCutOffPoint: 0
+    noiseType: 0
+  floraDrawDistance: 0
+  floraDensity: 0
+  floraObjectResolutionScale: 0
+  floraObjectOverlapCheckLimit: 0
+  terrainDetailToAlphaMapScale: 0
+  CivilizationToTerrainDetailMapScale: 0
+  CivilizationNoise:
+    scale: 0
+    texture: {fileID: 0}
+    importance: 0
+    contrast: 0
+    trimDir: 0
+    trimCutOffPoint: 0
+    noiseType: 0
+  totalCivilizationObjectValues: 0
+  civilizationNoisePeakValue: 0
+  civilizationObjectNoiseValue: 0
+  civilizationObjects: []
+  civilizationObjectsCurveDistribution: []
+  civilizationObjectResolutionScale: 0
+  civilizationObjectOverlapCheckLimit: 0
 --- !u!1 &1903120166
 GameObject:
   m_ObjectHideFlags: 0

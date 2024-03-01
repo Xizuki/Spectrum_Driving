@@ -93,6 +93,8 @@ public struct CivilizationPresets
 [RequireComponent (typeof (MapManager))]
 public class MapRandomizer : MonoBehaviour
 {
+    public ObstacleManager obstacleManager;
+
     public TerrainData defaultEmptyTerrain;
     public MapManager mapManager;
 
@@ -447,7 +449,7 @@ public class MapRandomizer : MonoBehaviour
 
         int randomObstacleIndex = Random.Range(0, presets[mapPresetIndex].obstacles.Length);
         int obstacleIndex = presets[mapPresetIndex].obstacles[randomObstacleIndex];
-        ObstacleManager.instance.UpdateObstacles(roadObstacles[obstacleIndex]);
+        obstacleManager.UpdateObstacles(roadObstacles[obstacleIndex]);
 
 
 

@@ -218,17 +218,19 @@ public class MapManager : MonoBehaviour
         int randomIndex = UnityEngine.Random.Range(0, GetComponent<MapRandomizer>().presets.Length);
         //GetComponent<MapRandomizer>().defaultEmptyTerrain = terrain.terrainData;
         //GetComponent<MapRandomizer>().ResetTerrain();
-        GetComponent<MapRandomizer>().selectedMapPreset = randomIndex;
-        GetComponent<MapRandomizer>().RandomizeMapManagerDebugPreset();
-        GenerateMap();
+        //GetComponent<MapRandomizer>().selectedMapPreset = randomIndex;
+        //GetComponent<MapRandomizer>().RandomizeMapManagerDebugPreset();
+        //GenerateMap();
 
         //GenerateMap();
-        //LoadScene();
+        LoadScene();
     }
 
 
     public void LoadScene()
     {
+        UnityEngine.Random.InitState(System.DateTime.Now.Millisecond);
+
         int randomIndex = UnityEngine.Random.Range(0, GetComponent<MapRandomizer>().presets.Length);
         //GetComponent<MapRandomizer>().defaultEmptyTerrain = terrain.terrainData;
         //GetComponent<MapRandomizer>().ResetTerrain();
@@ -265,20 +267,20 @@ public class MapManager : MonoBehaviour
 
 
 
-    int ran = 0;
-    float timer = 0;
+    //int ran = 0;
+    //float timer = 0;
     public void Update()
     {
-        if (onUpdate && timer %4 <= Time.deltaTime)
-            GenerateGroundTerrain_PerlinNoise();
+        //if (onUpdate && timer %4 <= Time.deltaTime)
+        //    GenerateGroundTerrain_PerlinNoise();
 
-        timer += Time.deltaTime;
-        //if(ran < 2)
-        //    roadSplineContainer.gameObject.GetComponent<SplineInstantiate>().Randomize();
-        //else
-        //    GameManager.instance.RemoveObstaclesNearPlayer();
+        //timer += Time.deltaTime;
+        ////if(ran < 2)
+        ////    roadSplineContainer.gameObject.GetComponent<SplineInstantiate>().Randomize();
+        ////else
+        ////    GameManager.instance.RemoveObstaclesNearPlayer();
 
-        ran++;
+        //ran++;
     }
 
     public int[] entrancePosition;
@@ -310,7 +312,6 @@ public class MapManager : MonoBehaviour
         stopwatch.Start();
 
 
-        UnityEngine.Random.InitState(System.DateTime.Now.Millisecond);
 
         terrain.detailObjectDistance = floraDrawDistance;
 
