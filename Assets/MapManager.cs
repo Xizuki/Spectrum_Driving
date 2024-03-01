@@ -660,7 +660,7 @@ public class MapManager : MonoBehaviour
             }
 
             Vector3 pos = new Vector3(splinePos.x, terrain.SampleHeight(splinePos), splinePos.z);
-            BezierKnot bezierKnot = new BezierKnot(pos, Vector3.zero, Vector3.zero, quaternion.Euler(splineUpVector));
+            BezierKnot bezierKnot = new BezierKnot(pos, Vector3.zero, Vector3.zero, quaternion.Euler(Vector3.up));
 
 
             projectedRoadSpline.Add(bezierKnot);
