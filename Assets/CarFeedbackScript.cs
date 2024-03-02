@@ -164,7 +164,8 @@ public class CarFeedbackScript : MonoBehaviour
         foreach (GameObject wheel in wheels)
         {
 
-            wheel.transform.eulerAngles += new Vector3(rotateAxis.x * eegRate * wheelSpeed, rotateAxis.y * eegRate * wheelSpeed, rotateAxis.z* eegRate * wheelSpeed) * Time.deltaTime;
+            wheel.transform.rotation =  Quaternion.Euler(wheel.transform.eulerAngles + 
+                new Vector3(rotateAxis.x * eegRate * wheelSpeed, rotateAxis.y * eegRate * wheelSpeed, rotateAxis.z* eegRate * wheelSpeed) * Time.deltaTime);
         }
     }
 }

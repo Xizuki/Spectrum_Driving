@@ -18,5 +18,6 @@ public class MusicManager : MonoBehaviour
         AudioClip randomClip = musics[randomIndex];
 
         carScript.carFeedbackScript.musicSource.clip = randomClip;
+        carScript.carFeedbackScript.musicSource.Play();
     }
 }
