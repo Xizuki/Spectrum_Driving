@@ -23,6 +23,8 @@ public class CarScript : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        //Application.targetFrameRate = 10;
+
         carFeedbackScript = Xi_Helper_GameObjects.ConditionalAssignment<CarFeedbackScript>(GetComponent<CarFeedbackScript>());
         splineAnimate = Xi_Helper_GameObjects.ConditionalAssignment<SplineAnimate>(transform.parent.GetComponent<SplineAnimate>());
         namedPipeServer = GameObject.FindObjectOfType<NamedPipeServer>();   
@@ -143,9 +145,12 @@ public class CarScript : MonoBehaviour
         float timeSpeed = 1 / timeToTiltBackToDefault;
 
 
-        if(!XizukiMethods.Math.Xi_Helper_Math.EstimatedEqual(ref tiltT, 0, EstimatedEqualType.Range, 0.1f))
+        if(!XizukiMethods.Math.Xi_Helper_Math.EstimatedEqual(ref tiltT, 0, EstimatedEqualType.Range, 0.25f))
         {
-            XizukiMethods.Math.Xi_Helper_Math.Clamp(ref tiltT, -1, 1, Time.deltaTime * -dir * timeSpeed * (0.3f + (eegRate * 0.7f)));
+            XizukiMethods.Math.Xi_Helper_Math.Clamp(ref tiltT, 
+                -1,
+                1,
+                Time.deltaTime * -dir * timeSpeed * (0.3f + (eegRate * 0.7f)));
         }
     }
 

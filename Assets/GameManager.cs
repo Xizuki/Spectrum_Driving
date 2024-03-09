@@ -117,7 +117,7 @@ public class GameManager : MonoBehaviour
         else if (state == GameState.Playing)
         {
 
-            if (Xi_Helper_Math.EstimatedEqual(CameraPivot.transform.localEulerAngles.y, 0, EstimatedEqualType.Range, 1))
+            if (Xi_Helper_Math.EstimatedEqual(CameraPivot.transform.localEulerAngles.y, 0, EstimatedEqualType.Range, 0.25f))
             {
                 CameraPivot.transform.localEulerAngles = new Vector3(0, 0, 0);
             }
