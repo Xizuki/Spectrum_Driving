@@ -1,5 +1,7 @@
 using System;
 using System.Collections;
+using System.Runtime.ConstrainedExecution;
+using TMPro;
 using UnityEngine;
 
 
@@ -108,18 +110,44 @@ public class CarUpgradesManager : MonoBehaviour
         }
     }
 
+    public TMP_Text debugText1;
+    public TMP_Text debugText2;
+
     // Start is called before the first frame update
     void Start()
     {
-        carScript = GetComponent<CarScript>(); 
-        
+
+        //if(carScript)
+        //    debugText1.text = "true";
+        //else
+        //    debugText1.text = "false";
+
+        carScript = GameObject.FindGameObjectWithTag("Player").GetComponentInChildren<CarScript>();
+
+        carScript = GetComponent<CarScript>();
+
         carScript.carFeedbackScript.wheels = wheels[currentCarIndex].gameobjects;
 
     }
 
+    int frameCounter = 0;
     // Update is called once per frame
     void Update()
     {
-        
+        if(frameCounter==0)
+        {
+            //carScript = GameObject.FindGameObjectWithTag("Player").GetComponentInChildren<CarScript>();
+
+            //carScript = GetComponent<CarScript>();
+
+            //carScript.carFeedbackScript.wheels = wheels[currentCarIndex].gameobjects;
+        }
+
+        frameCounter++;
+
+        if (carScript)
+            debugText2.text = "true";
+        else
+            debugText2.text = "false";
     }
 }

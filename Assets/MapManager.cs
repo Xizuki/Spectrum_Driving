@@ -20,9 +20,10 @@ using System.Diagnostics;
 using Unity.Burst;
 using TMPro;
 using UnityEngine.SceneManagement;
+using System.Runtime.ConstrainedExecution;
 
 #region Enums
-public enum Civilization { Wild, Rural, Suburbs, Urban}
+public enum Civilization { Wild, Rural, Suburbs, Urban }
 public enum WaterBody { Moving, Still, None }
 public enum RoadPattern { Circular, Sharp, Random }
 public enum NoiseType { Perlin, c, s, sr }
@@ -185,7 +186,7 @@ public class MapManager : MonoBehaviour
     [Header("GameObjects")]
     public Terrain terrain;
 
- 
+
 
     [Header("Tunnel Variables")]
     public GameObject tunnelEntranceGO;
@@ -199,12 +200,21 @@ public class MapManager : MonoBehaviour
         XizukiMethods.GameObjects.Xi_Helper_GameObjects.MonoInitialization<MapManager>(ref Instance, this);
     }
 
+    public TMP_Text debugText;
+
+
+    public SplineInstantiate roadSplineInstantiate;
     void Start()
     {
+        debugText.text = "roadSplineContainer  SplineInstantiate = " + (roadSplineContainer.GetComponent<SplineInstantiate>() != null);
+
+
+
+        car = GameObject.FindGameObjectWithTag("Player").GetComponentInChildren<CarScript>();
+
         car.splineAnimate.Container = roadSplineContainer;
 
-        roadSplineContainer.gameObject.GetComponent<SplineInstantiate>().Randomize();
-        GameManager.instance.RemoveObstaclesNearPlayer();
+
     }
 
     private void Awake()
@@ -216,6 +226,10 @@ public class MapManager : MonoBehaviour
         //GetComponent<MapRandomizer>().Randomize();
 
         int randomIndex = UnityEngine.Random.Range(0, GetComponent<MapRandomizer>().presets.Length);
+
+
+        //roadSplineContainer.gameObject.GetComponent<SplineInstantiate>().Randomize();
+
         //GetComponent<MapRandomizer>().defaultEmptyTerrain = terrain.terrainData;
         //GetComponent<MapRandomizer>().ResetTerrain();
         //GetComponent<MapRandomizer>().selectedMapPreset = randomIndex;
@@ -223,6 +237,7 @@ public class MapManager : MonoBehaviour
         //GenerateMap();
 
         //GenerateMap();
+
         LoadScene();
     }
 
@@ -237,6 +252,7 @@ public class MapManager : MonoBehaviour
         GetComponent<MapRandomizer>().selectedMapPreset = randomIndex;
         GetComponent<MapRandomizer>().RandomizeMapManagerDebugPreset();
 
+
         GenerateMap();
 
         //SceneManager.LoadScene(0);
@@ -249,7 +265,7 @@ public class MapManager : MonoBehaviour
 
         GenerateMap();
     }
-   
+
 
 
     [Header("Terrain Values")]
@@ -269,8 +285,37 @@ public class MapManager : MonoBehaviour
 
     //int ran = 0;
     //float timer = 0;
+
+    public int frameCounter;
     public void Update()
     {
+        if (frameCounter == 0)
+        {
+            GameManager.instance.RemoveObstaclesNearPlayer();
+
+            roadSplineContainer.gameObject.GetComponent<SplineInstantiate>().Randomize();
+            ObstacleManager.instance.splineInstantiate.Randomize();
+            GameManager.instance.RemoveObstaclesNearPlayer();
+
+        }
+        if (frameCounter == 1)
+        {
+            //roadSplineContainer.gameObject.GetComponent<SplineInstantiate>().Randomize();
+
+            //ObstacleManager.instance.splineInstantiate.Randomize();
+            //GameManager.instance.RemoveObstaclesNearPlayer();
+
+
+            //car = GameObject.FindGameObjectWithTag("Player").GetComponentInChildren<CarScript>();
+
+            //car.splineAnimate.Container = roadSplineContainer;
+
+            //roadSplineContainer.gameObject.GetComponent<SplineInstantiate>().Randomize();
+            //
+        }
+
+        frameCounter++;
+
         //if (onUpdate && timer %4 <= Time.deltaTime)
         //    GenerateGroundTerrain_PerlinNoise();
 
@@ -364,7 +409,7 @@ public class MapManager : MonoBehaviour
         stopwatch.Stop();
         print($"GenerateMap() took {stopwatch.Elapsed.TotalSeconds} seconds to run.");
 
-        timeText.text = ""+stopwatch.Elapsed.TotalSeconds;
+        timeText.text = "" + stopwatch.Elapsed.TotalSeconds;
     }
 
     public GameObject debugParent;
@@ -420,7 +465,7 @@ public class MapManager : MonoBehaviour
                 roadOverlayingArray[xValue, yValue] = 3;
                 //roadOverlayingArray[xValue, yValue] = 1;
 
-                for (int xdiff = -2;  xdiff < 2; xdiff++) 
+                for (int xdiff = -2; xdiff < 2; xdiff++)
                 {
                     for (int ydiff = -2; ydiff < 2; ydiff++)
                     {
@@ -432,9 +477,9 @@ public class MapManager : MonoBehaviour
 
                         if (roadOverlayingHeightsArray[xPos, yPos] > magDiff || roadOverlayingHeightsArray[xPos, yPos] == 0)
                         {
-                            if(roadOverlayingArray[xPos, yPos] != 3)
+                            if (roadOverlayingArray[xPos, yPos] != 3)
                             {
-                                if(Mathf.Abs(xdiff) <= 1 && Mathf.Abs(ydiff) <= 1)
+                                if (Mathf.Abs(xdiff) <= 1 && Mathf.Abs(ydiff) <= 1)
                                 {
                                     roadOverlayingArray[xPos, yPos] = 2;
                                 }
@@ -445,21 +490,21 @@ public class MapManager : MonoBehaviour
                             }
 
                             roadOverlayingHeightsArray[xPos, yPos] = magDiff;
-                            heights[yPos, xPos] = (splinePos.y-0.1f) / size.y;
+                            heights[yPos, xPos] = (splinePos.y - 0.1f) / size.y;
 
 
                             if (spawnRoadCubes)
                             {
                                 GameObject go;
-      
-                                    go = GameObject.Instantiate(debugGO);
-                                    go.transform.position = new Vector3(
-                                        (xPos) * size.x / roadOverlayingHeightsArray.GetLength(0),
-                                        splinePos.y,
-                                        (yPos) * size.z / roadOverlayingHeightsArray.GetLength(1)); // Use GetLength(1) for y dimension
-                                    go.GetComponent<debugCubeScript>().arrayPos = new Vector2(xPos, yPos);
-                                    go.GetComponent<debugCubeScript>().i = (t1 + (tDiff * division));
-                                    go.transform.parent = debugParent.transform;
+
+                                go = GameObject.Instantiate(debugGO);
+                                go.transform.position = new Vector3(
+                                    (xPos) * size.x / roadOverlayingHeightsArray.GetLength(0),
+                                    splinePos.y,
+                                    (yPos) * size.z / roadOverlayingHeightsArray.GetLength(1)); // Use GetLength(1) for y dimension
+                                go.GetComponent<debugCubeScript>().arrayPos = new Vector2(xPos, yPos);
+                                go.GetComponent<debugCubeScript>().i = (t1 + (tDiff * division));
+                                go.transform.parent = debugParent.transform;
                             }
 
                         }
@@ -479,7 +524,7 @@ public class MapManager : MonoBehaviour
 
 
 
-        terrain.terrainData.SetHeights(0,0,heights);
+        terrain.terrainData.SetHeights(0, 0, heights);
 
 
         roadOverlayTexture = ConvertIntArrayToTexture(roadOverlayingArray);
@@ -592,7 +637,7 @@ public class MapManager : MonoBehaviour
 
     public void SetRoadOverlayHeights()
     {
-        roadOverlayingHeightsArray = new float[(int)(terrain.terrainData.detailResolution/ roadOverlayScale), (int)(terrain.terrainData.detailResolution / roadOverlayScale)];
+        roadOverlayingHeightsArray = new float[(int)(terrain.terrainData.detailResolution / roadOverlayScale), (int)(terrain.terrainData.detailResolution / roadOverlayScale)];
     }
 
     public void ScaleRoadSplineToTerrain()
@@ -613,7 +658,7 @@ public class MapManager : MonoBehaviour
 
             referenceRoadSpline.SetKnot(i, scaledKnot, BezierTangent.In);
         }
-      
+
     }
 
 
@@ -640,7 +685,7 @@ public class MapManager : MonoBehaviour
 
 
 
-        for (int i = 0; i < roadSplineTerrainProjectionResolution-1; i++)
+        for (int i = 0; i < roadSplineTerrainProjectionResolution - 1; i++)
         {
             float3 splinePos = Vector3.zero;
             float3 splineTanget = Vector3.zero;
@@ -648,14 +693,14 @@ public class MapManager : MonoBehaviour
 
 
             float t1 = (float)i / roadSplineTerrainProjectionResolution;
-            float t2 =((float)i+1) / roadSplineTerrainProjectionResolution;
+            float t2 = ((float)i + 1) / roadSplineTerrainProjectionResolution;
 
 
             for (int j = 0; j < roadOverlayResolution; j++)
             {
                 float tDiff = t2 - t1;
-                float division = j/roadOverlayResolution;
-                referenceRoadSpline.Evaluate((t1+ (tDiff* division)), out splinePos, out splineTanget, out splineUpVector);
+                float division = j / roadOverlayResolution;
+                referenceRoadSpline.Evaluate((t1 + (tDiff * division)), out splinePos, out splineTanget, out splineUpVector);
 
             }
 
@@ -676,7 +721,7 @@ public class MapManager : MonoBehaviour
 
 
 
-       
+
     }
 
     #endregion
@@ -855,7 +900,7 @@ public class MapManager : MonoBehaviour
                 result[x, y] = noisePixelValue;
             }
         }
-        
+
 
         //for(int x = 0; x < result.GetLength(0)-1; x++)
         //{
@@ -1035,7 +1080,7 @@ public class MapManager : MonoBehaviour
 
                 //noisePixelValue = NoiseTrim(noisePixelValue, noiseDatas[i].trimDir, noiseDatas[i].trimCutOffPoint);
 
-                noisePixelValue = noiseCheck(x,y,noisePixelValue);
+                noisePixelValue = noiseCheck(x, y, noisePixelValue);
 
                 // Set the pixel color based on the Perlin noise value
                 //noiseDatas[i].texture.SetPixel(x, y, new Color(noisePixelValue, noisePixelValue, noisePixelValue));
@@ -1052,7 +1097,7 @@ public class MapManager : MonoBehaviour
 
     [BurstCompile]
     public float[,] GetPerlinNoise_Compare(float[,] arr, float xSeed, float ySeed, float scale,
-   NoiseType noiseType,  float[,] comparedNoise, NoiseCompare noiseCompare)
+   NoiseType noiseType, float[,] comparedNoise, NoiseCompare noiseCompare)
     {
         float[,] result = new float[arr.GetLength(0), arr.GetLength(1)];
 
@@ -1413,7 +1458,7 @@ public class MapManager : MonoBehaviour
 
 
 
-                
+
                 floraValues = NormalizeArrayValues(floraValues);
 
 
@@ -1446,15 +1491,15 @@ public class MapManager : MonoBehaviour
 
                 float totalFloraValue = 0;
 
-                    for (int i = 0; i < floraValues.Length; i++)
-                    {
-                        alphaMap[x, z, floraTerrainTextures[i].index] = floraValues[i];
-                        totalFloraValue += floraValues[i];
-                    }
-                
-               
+                for (int i = 0; i < floraValues.Length; i++)
+                {
+                    alphaMap[x, z, floraTerrainTextures[i].index] = floraValues[i];
+                    totalFloraValue += floraValues[i];
+                }
+
+
                 float groundPercentange = 1 - totalFloraValue;
-                
+
 
                 dirtRatio = 1 - FloraNoiseData.heights[x, z];
 
@@ -1514,7 +1559,7 @@ public class MapManager : MonoBehaviour
         if (!hasWater) return;
 
         waterLevel = UnityEngine.Random.Range(
-            roadSplineLowestPoint- (roadSplineLowestPoint*waterVariance), roadSplineLowestPoint);
+            roadSplineLowestPoint - (roadSplineLowestPoint * waterVariance), roadSplineLowestPoint);
         waterGO = GameObject.Instantiate(waterPrefab);
         waterGO.transform.parent = transform;
         waterGO.transform.transform.position = new Vector3(0, waterLevel, 0);
@@ -1572,7 +1617,7 @@ public class MapManager : MonoBehaviour
 
         result = new Vector3(
            (((float)x) / (float)heightmapWidth) * size.x,
-           (terrain.terrainData.GetHeight((int)x,(int)y)),//(terrain.terrainData.GetHeights(0, 0, heightmapWidth, heightmapHeight)[(int)y, (int)x]) * size.y, // terrain.SampleHeight(new Vector3(x,0,y)),
+           (terrain.terrainData.GetHeight((int)x, (int)y)),//(terrain.terrainData.GetHeights(0, 0, heightmapWidth, heightmapHeight)[(int)y, (int)x]) * size.y, // terrain.SampleHeight(new Vector3(x,0,y)),
 
            (((float)y) / (float)heightmapHeight) * size.z);
 
@@ -1581,7 +1626,7 @@ public class MapManager : MonoBehaviour
     }
 
     #endregion
-    
+
 
     #region OLD OLD OLD
     #region Road Generation Scripts 
@@ -1657,7 +1702,7 @@ public class MapManager : MonoBehaviour
     //        #endregion
 
 
-        
+
     //        roadCount += roadDistance;
     //        index++;
     //    }
@@ -1735,7 +1780,7 @@ public class MapManager : MonoBehaviour
     //        BezierKnot bezierKnot = new BezierKnot(GetSurfacePositionOfTerrainFrom2dArray(roadPoints[i].x, roadPoints[i].y));
     //        roadSplineContainer.Spline.Add(bezierKnot);
     //        roadSplineContainer.Spline.SetKnot(i, bezierKnot, BezierTangent.In);
-       
+
     //    }
     //    roadSplineContainer.Spline.SetTangentMode(TangentMode.AutoSmooth);
     //    roadSplineContainer.Spline.SetTangentMode(TangentMode.Mirrored);
@@ -2016,7 +2061,7 @@ public class MapManager : MonoBehaviour
 
         FloraNoiseData.texture = new Texture2D(alphaMapResolution, alphaMapResolution, TextureFormat.ARGB32, false);
 
-        FloraNoiseData.heights = GetPerlinNoise(FloraNoiseData.heights, randX, randY, FloraNoiseData.scale, 
+        FloraNoiseData.heights = GetPerlinNoise(FloraNoiseData.heights, randX, randY, FloraNoiseData.scale,
                                                 FloraNoiseData.noiseType);
 
 
@@ -2108,7 +2153,7 @@ public class MapManager : MonoBehaviour
             newDetails[i].useInstancing = true;
 
             newDetails[i].renderMode = DetailRenderMode.VertexLit;
-           
+
             newDetails[i].density = detail.detailDensity;
 
             newDetails[i].minHeight = detail.heightRange[0];
@@ -2116,6 +2161,7 @@ public class MapManager : MonoBehaviour
             newDetails[i].minWidth = detail.widthRange[0];
             newDetails[i].maxWidth = detail.widthRange[1];
 
+            floraTerrainDetailPrefabs[i].index = i;
             //floraTerrainDetailPrefabs[prefabIndex];
         }
 
@@ -2127,7 +2173,7 @@ public class MapManager : MonoBehaviour
 
     #region Generate Grass Scripts
 
-    [ContextMenu("Generate Grass")]  
+    [ContextMenu("Generate Grass")]
     public void GenerateGrass()
     {
         TerrainData t = terrain.terrainData;
@@ -2139,15 +2185,18 @@ public class MapManager : MonoBehaviour
 
         for (int i = 0; i < floraTerrainDetailPrefabs.Length; i++)
         {
-            int[,] map = new int[ t.detailWidth, t.detailHeight];
+            int[,] map = new int[t.detailWidth, t.detailHeight];
 
 
             for (int x = 0; x < t.detailResolution; x++)
             {
                 for (int y = 0; y < t.detailResolution; y++)
                 {
+
+
+
                     #region Water Level Check
-                    if (hasWater && heights[(int)(x* detailToHeightScale),(int)( y* detailToHeightScale)]*size.y < waterLevel)
+                    if (hasWater && heights[(int)(x * detailToHeightScale), (int)(y * detailToHeightScale)] * size.y < waterLevel)
                     {
                         continue;
                     }
@@ -2167,7 +2216,7 @@ public class MapManager : MonoBehaviour
                         FloraNoiseData.heights[scaledX, scaledY]
                         );
 
-                    //noiseValue = AdjustValueToCurve(noiseValue, floraDetailsCurveDistribution[i], true);
+                    noiseValue = AdjustValueToCurve(noiseValue, floraDetailsCurveDistribution[i], true);
 
 
                     if (noiseValue < 0) continue;
@@ -2191,16 +2240,23 @@ public class MapManager : MonoBehaviour
 
                     bool roadOverlap = false;
 
-                    if (roadOverlayingArray[roadScaledY, roadScaledX] > 0)
+                    if (roadOverlayingHeightsArray[roadScaledY, roadScaledX] > 0)
+                    //if (roadOverlayingHeightsArray[roadScaledY, roadScaledX] < 1 && roadOverlayingHeightsArray[roadScaledY, roadScaledX] > 0)
                         roadOverlap = true;
 
-  
+
 
                     #endregion
 
                     if (!roadOverlap)
+                    {
+                        //print("Plant GRASS");
                         map[x, y] = (int)(floraTerrainDetailPrefabs[(i)].maxAmount * noiseValue);
+                        map[x, y] = 50;
 
+                    }
+
+                   // map[x, y] = 50;
 
                 }
             }
@@ -2209,7 +2265,7 @@ public class MapManager : MonoBehaviour
     }
 
 
-  
+
     #endregion
 
 
@@ -2247,7 +2303,7 @@ public class MapManager : MonoBehaviour
 
                 //floraTerrainDetailPrefabs[prefabIndex];
             }
-            
+
             t.treePrototypes = newTreePrototypes.ToArray();
 
         }
@@ -2337,7 +2393,7 @@ public class MapManager : MonoBehaviour
         float detailToHeightScale = (float)heights.GetLength(0) / (float)t.detailResolution * (float)floraObjectResolutionScale;
 
 
-        for (int x = 0; x < t.detailResolution /floraObjectResolutionScale;  x++)
+        for (int x = 0; x < t.detailResolution / floraObjectResolutionScale; x++)
         {
             for (int y = 0; y < t.detailResolution / floraObjectResolutionScale; y++)
             {
@@ -2387,33 +2443,33 @@ public class MapManager : MonoBehaviour
                     {
                         floraObjectWeights[i] += AdjustValueToCurve(noiseValue, floraObjectsCurveDistribution[i], true);
                         if (floraObjectWeights[i] < 0) floraObjectWeights[i] = 0;
-                    } 
+                    }
 
                     floraObjectWeights = NormalizeArrayValues(floraObjectWeights);
 
 
                     float randomValue = UnityEngine.Random.Range(0f, 1f);
-                    float total=0;
+                    float total = 0;
 
-                 
+
 
                     for (int i = 0; i < floraObjectWeights.Length; i++)
                     {
                         total += floraObjectWeights[i];
-                        if (randomValue > total-floraObjectWeights[i] && randomValue < total)
+                        if (randomValue > total - floraObjectWeights[i] && randomValue < total)
                         {
                             selectedObjectIndex = i;
                         }
                     }
-                 
+
                     #endregion
 
 
 
-                    float randomX = UnityEngine.Random.Range((float)x *floraObjectResolutionScale  / FloraNoiseData.heights.GetLength(0),
-                                                        ((float)x + 1)* floraObjectResolutionScale  / FloraNoiseData.heights.GetLength(0));
-                    float randomZ = UnityEngine.Random.Range((float)y * floraObjectResolutionScale  / FloraNoiseData.heights.GetLength(1),
-                                                        ((float)y+ 1) * floraObjectResolutionScale  / FloraNoiseData.heights.GetLength(1));
+                    float randomX = UnityEngine.Random.Range((float)x * floraObjectResolutionScale / FloraNoiseData.heights.GetLength(0),
+                                                        ((float)x + 1) * floraObjectResolutionScale / FloraNoiseData.heights.GetLength(0));
+                    float randomZ = UnityEngine.Random.Range((float)y * floraObjectResolutionScale / FloraNoiseData.heights.GetLength(1),
+                                                        ((float)y + 1) * floraObjectResolutionScale / FloraNoiseData.heights.GetLength(1));
 
 
 
@@ -2498,14 +2554,14 @@ public class MapManager : MonoBehaviour
         }
         t.SetTreeInstances(treeInstances.ToArray(), true);
     }
-        #endregion
+    #endregion
 
     #endregion
 
 
     public void TerrainObjectTest()
     {
-        for(int i = 0; i< floraObjects.Length; i++)
+        for (int i = 0; i < floraObjects.Length; i++)
         {
             for (int j = 0; j < floraObjects[i].amount; j++)
             {
@@ -2537,7 +2593,7 @@ public class MapManager : MonoBehaviour
     //public TerrainDetailPrefab[] civlizationTestPrefab;
     public float civilizationObjectNoiseValue;
 
-    
+
     //[SerializeField]
     //public TerrainDetailPrefab[] floraTerrainDetailPrefabs;
     //public AnimationCurve[] floraDetailsCurveDistribution;
@@ -2556,7 +2612,7 @@ public class MapManager : MonoBehaviour
 
     public void GenerateCivilizationNoise()
     {
-      
+
         // Use a random seed each time the script runs
 
         int randX = UnityEngine.Random.Range(0, 10000);
@@ -2635,9 +2691,9 @@ public class MapManager : MonoBehaviour
 
 
 
-        
-        
-        
+
+
+
         float InverseFlora = 1 - floraNoise[x, y];
 
         if (CivilizationPixelNoiseValue > InverseFlora)
@@ -2665,7 +2721,7 @@ public class MapManager : MonoBehaviour
 
     public void CivilizationHotSpots()
     {
-       
+
     }
 
     #endregion
@@ -2760,7 +2816,7 @@ public class MapManager : MonoBehaviour
                 noiseValue = sum / (civilizationObjectResolutionScale * civilizationObjectResolutionScale);
 
                 #endregion
- 
+
 
                 float civilizationObjectNoiseValue = noiseValue * civilizationNoisePeakValue;
 
@@ -2855,7 +2911,7 @@ public class MapManager : MonoBehaviour
                         {
                             roadOverlap = true;
                         }
-                       
+
 
                         if (roadOverlap)
                         {
@@ -2910,8 +2966,8 @@ public class MapManager : MonoBehaviour
 
 
     public int GetTerrainDetailPrefabFromIndex(int index)
-    { 
-        for(int i = 0; i < floraTerrainDetailPrefabs.Length; i++) 
+    {
+        for (int i = 0; i < floraTerrainDetailPrefabs.Length; i++)
         {
             if (floraTerrainDetailPrefabs[i].index == index)
             {

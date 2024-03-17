@@ -1,0 +1,168 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &2851894165456099098
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5895810117564565350}
+  - component: {fileID: 489860643951619970}
+  - component: {fileID: 7204687651356625220}
+  - component: {fileID: 87052515706071778}
+  - component: {fileID: 753744937607192252}
+  - component: {fileID: 6513699348542806032}
+  m_Layer: 0
+  m_Name: GameManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &5895810117564565350
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2851894165456099098}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -1.3358684, y: -1.3806689, z: 0.25942522}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 11
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &489860643951619970
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2851894165456099098}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 71282bdd80461344b82d59ddc242a86e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  intervalTimer: 0
+  isPaused: 0
+  uiManager: {fileID: 7204687651356625220}
+  carUpgradesManager: {fileID: 0}
+  state: 0
+  CameraPivot: {fileID: 0}
+  IntervalRotationSpeed: 20
+  currentSession: 0
+  highestScoreOfSession: 0
+  scores:
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  scoreScale: 0.1
+  carScript: {fileID: 0}
+  obstacleDestroyDistance: 80
+--- !u!114 &7204687651356625220
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2851894165456099098}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f7ec6b896c943654a920e473239e457c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  pauseCanvas: {fileID: 0}
+  intervalCanvas: {fileID: 0}
+  progressBars:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  gameCanvas: {fileID: 0}
+  score_txt: {fileID: 0}
+  progressionUI: {fileID: 0}
+  loadingScreenUI: {fileID: 0}
+--- !u!114 &87052515706071778
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2851894165456099098}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8dd8af244be20b641b571144d8dbfd73, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  soundVolume: 0
+  musicVolume: 0
+  difficulty: 0
+  obstacleDestroyDistance: 400
+  currentGraphics: 4
+  graphicsSlider: {fileID: 0}
+  soundSlider: {fileID: 0}
+  musicSlider: {fileID: 0}
+  difficultySlider: {fileID: 0}
+--- !u!114 &753744937607192252
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2851894165456099098}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 69f5522bb3629314da2f7e5055c840c6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  spawnFrequency: 0
+  obstacles:
+  - {fileID: 1722352228393346, guid: a7d490e0428c7a447a093e393afb02e8, type: 3}
+  - {fileID: 1111471699671688, guid: e86daebd401b5c24082a0f0f9d3dde42, type: 3}
+  obstaclesSpawnPercentage:
+  - 1
+  - 1
+  minPositionalOffset: {x: -10, y: 4.25, z: 0}
+  maxPositionalOffset: {x: 10, y: 4.25, z: 0}
+  splineInstantiate: {fileID: 0}
+  minMaxSpacingDifficultySettings:
+  - {x: 350, y: 1400}
+  - {x: 275, y: 1100}
+  - {x: 200, y: 800}
+  - {x: 100, y: 400}
+  - {x: 30, y: 120}
+--- !u!114 &6513699348542806032
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2851894165456099098}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 46da21036c81d534cbfbd1399cfb4474, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  musics:
+  - {fileID: 8300000, guid: 67a4d4aa8df4b7c45a9f0dd4711b70f5, type: 3}
+  - {fileID: 8300000, guid: 7910078a7604b3f4899d8b033174b055, type: 3}
+  - {fileID: 8300000, guid: f3d75a1596fb5cd47b3a64996a1f556f, type: 3}
+  - {fileID: 8300000, guid: 15b40293f3e71c14295ba2ed88dd642c, type: 3}

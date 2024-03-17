@@ -22,7 +22,7 @@ public class PlayerControllerScript : MonoBehaviour
     void Awake()
     {
 
-        carScript = XizukiMethods.GameObjects.Xi_Helper_GameObjects.ConditionalAssignment<CarScript>(GetComponent<CarScript>());
+        //carScript = XizukiMethods.GameObjects.Xi_Helper_GameObjects.ConditionalAssignment<CarScript>(GetComponent<CarScript>());
     }
 
     public bool hasInput;

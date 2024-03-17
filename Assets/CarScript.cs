@@ -77,7 +77,7 @@ public class CarScript : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(splineAnimate.NormalizedTime >= 0.998)
+        if(splineAnimate.NormalizedTime >= 0.998 && GameManager.instance.state == GameState.Playing)
         {
 
             StartCoroutine( GameManager.instance.LoadNewWorld());
@@ -196,7 +196,7 @@ public class CarScript : MonoBehaviour
 
         other.gameObject.GetComponent<Rigidbody>().AddExplosionForce(10000f, randomForce, 10f);
 
-        GetHit();
+        GetHit(other);
     }
 
     public MeshRenderer[] meshRenderers;
@@ -210,9 +210,12 @@ public class CarScript : MonoBehaviour
     public int hitTimeTicks;
     public float hitTime;
 
-    public void GetHit()
-    {       
-        StartCoroutine(HitVFX());
+    public void GetHit(Collider col)
+    {
+        Destroy(col);
+
+        if(!justHit)
+            StartCoroutine(HitVFX());
     }
 
     IEnumerator HitVFX()

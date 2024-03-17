@@ -68,7 +68,7 @@ public class UIManager : MonoBehaviour
 
     public void UpdateScore(float amount)
     {
-        score_txt.text = score_txtPrefix + amount.ToString();
+        score_txt.text = score_txtPrefix + ((int)amount).ToString();
     }
 
     public void UpdateProgressionUI(float tValue)

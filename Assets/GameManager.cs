@@ -6,7 +6,7 @@ using System.Linq;
 using TMPro;
 using XizukiMethods.Math;
 
-public enum GameState { Playing, Interval }
+public enum GameState { Playing, Interval, Loading }
 public class GameManager : MonoBehaviour
 {
     public static GameManager instance;
@@ -16,7 +16,7 @@ public class GameManager : MonoBehaviour
 
     public UIManager uiManager;
     public CarUpgradesManager carUpgradesManager;
-    public GameState state;
+    public  GameState state;
     public GameObject CameraPivot;
     public float IntervalRotationSpeed;
 
@@ -33,18 +33,24 @@ public class GameManager : MonoBehaviour
 
     public IEnumerator LoadNewWorld()
     {
+        GameManager.instance.state = GameState.Loading;
+
+
         UIManager.Instance.loadingScreenUI.SetActive(true);
 
-        yield return new WaitForSeconds(0.1f);
+        yield return new WaitForSeconds(0.02f);
 
         MapManager.Instance.LoadScene();
 
 
         carScript.splineAnimate.NormalizedTime = 0;
 
-        yield return new WaitForSeconds(0.1f);
+        yield return new WaitForSeconds(0.02f);
 
         UIManager.Instance.loadingScreenUI.SetActive(false);
+
+
+        GameManager.instance.state = GameState.Playing;
 
     }
 
@@ -66,6 +72,8 @@ public class GameManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        Application.targetFrameRate = 24;
+
         IntervalCamera();
         Scoring();
         uiManager.UpdateScore(Mathf.RoundToInt(scores[currentSession]));
@@ -114,12 +122,13 @@ public class GameManager : MonoBehaviour
         {
             CameraPivot.transform.Rotate(new Vector3(0, 1, 0) * IntervalRotationSpeed * Time.deltaTime);
         }
-        else if (state == GameState.Playing)
+        else if (state == GameState.Playing)  
         {
 
-            if (Xi_Helper_Math.EstimatedEqual(CameraPivot.transform.localEulerAngles.y, 0, EstimatedEqualType.Range, 0.25f))
+            if (Xi_Helper_Math.EstimatedEqual(CameraPivot.transform.localEulerAngles.y, 0, EstimatedEqualType.Range, 10))
             {
                 CameraPivot.transform.localEulerAngles = new Vector3(0, 0, 0);
+
             }
             else
             {
@@ -127,6 +136,7 @@ public class GameManager : MonoBehaviour
                 dir /= Mathf.Abs(dir);
 
                 CameraPivot.transform.Rotate(new Vector3(0, 8.5f, 0) * dir * IntervalRotationSpeed * Time.deltaTime);
+
             }
 
         }
@@ -148,8 +158,11 @@ public class GameManager : MonoBehaviour
         }
         else if(state == GameState.Interval)
         {
+            carUpgradesManager.adjustedUpgradeScore = 0;
+
             uiManager.gameCanvas.SetActive(false);
             uiManager.intervalCanvas.SetActive(true);
+            scores[currentSession] = Mathf.RoundToInt(scores[currentSession]);
             ProgressBarUI();
         }
     }
