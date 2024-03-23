@@ -21,6 +21,7 @@ public class UIManager : MonoBehaviour
 
     public GameObject loadingScreenUI;
 
+
     [ContextMenu("RandomizeMap()")]
     public void RandomizeMap()
     {
@@ -47,12 +48,16 @@ public class UIManager : MonoBehaviour
         pauseCanvas.SetActive(state);
         if (state)
         {
-            Time.timeScale = 0;
+            //Time.timeScale = 0;
+            //isPaused = false;
+            GameManager.instance.isPaused = true;
         }
         else
         {
             OptionsManager.instance.UnPausedDifficulty();
-            Time.timeScale = 1;
+            //Time.timeScale = 1;
+            //isPaused = true;
+            GameManager.instance.isPaused = false;
         }
     }
 

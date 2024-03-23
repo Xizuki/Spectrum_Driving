@@ -449,7 +449,12 @@ public class MapRandomizer : MonoBehaviour
 
         int randomObstacleIndex = Random.Range(0, presets[mapPresetIndex].obstacles.Length);
 
-        print("randomObstacleIndex = " + randomObstacleIndex); print("mapPresetIndex = " + mapPresetIndex);
+        print("randomObstacleIndex = " + randomObstacleIndex); 
+        print("mapPresetIndex = " + mapPresetIndex);
+
+        print("presets[mapPresetIndex] = " + presets[mapPresetIndex] != null);
+        print("presets[mapPresetIndex].obstacles[randomObstacleIndex] = " + presets[mapPresetIndex].obstacles[randomObstacleIndex] != null);
+
 
         int obstacleIndex = presets[mapPresetIndex].obstacles[randomObstacleIndex];
         obstacleManager.UpdateObstacles(roadObstacles[obstacleIndex]);
@@ -553,10 +558,10 @@ public class MapRandomizer : MonoBehaviour
         mapManager.civilizationNoisePeakValue = civilizationPresets[value].civilizationNoisePeakValue;
 
 
-;
 
 
-    index = Random.Range(0, presets[mapPresetIndex].skyboxes.Length);
+
+        index = Random.Range(0, presets[mapPresetIndex].skyboxes.Length);
         value = presets[mapPresetIndex].skyboxes[index];
         RenderSettings.skybox = skyboxes[value];
     }

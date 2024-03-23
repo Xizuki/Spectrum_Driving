@@ -48,6 +48,9 @@ public class ObstacleManager : MonoBehaviour
         splineInstantiate = reference;
 
         splineInstantiate.enabled = true;
+
+        GameManager.instance.RemoveObstaclesNearPlayer();
+
     }
 
     [ContextMenu("GenerateObstacles")]

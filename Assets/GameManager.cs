@@ -57,7 +57,7 @@ public class GameManager : MonoBehaviour
 
 
     // Start is called before the first frame update
-    void Start()
+    void Awake()
     {
         XizukiMethods.GameObjects.Xi_Helper_GameObjects.MonoInitialization<GameManager>(ref instance, this);
         uiManager = XizukiMethods.GameObjects.Xi_Helper_GameObjects.ConditionalAssignment<UIManager>(GetComponent<UIManager>());
@@ -65,10 +65,13 @@ public class GameManager : MonoBehaviour
         carScript = GameObject.FindObjectOfType<CarScript>();
         camPivotOriginalPos = CameraPivot.transform.localEulerAngles;
 
+    }
+    void Start()
+    {
+
 
         MusicManager.instance.RandomizeMusic(ref carScript);
     }
-
     // Update is called once per frame
     void Update()
     {
@@ -186,11 +189,14 @@ public class GameManager : MonoBehaviour
 
     public void Pause()
     {
+        print("Pause");
         uiManager.Pause(true);
         isPaused = true;
     }
     public void Resume()
     {
+        print("Resume");
+
         uiManager.Pause(false);
         isPaused = false;
     }

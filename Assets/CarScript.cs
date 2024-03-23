@@ -77,7 +77,9 @@ public class CarScript : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(splineAnimate.NormalizedTime >= 0.998 && GameManager.instance.state == GameState.Playing)
+        if (GameManager.instance.isPaused) eegRate =0;
+
+        if (splineAnimate.NormalizedTime >= 0.998 && GameManager.instance.state == GameState.Playing)
         {
 
             StartCoroutine( GameManager.instance.LoadNewWorld());
@@ -116,12 +118,14 @@ public class CarScript : MonoBehaviour
 
     private void FixedUpdate()
     {
-     
+        if (GameManager.instance.isPaused) eegRate = 0;
+
         AutoMove();
     }
 
     public void AutoMove()
     {
+
         speed = (eegRate * maxSpeed);
 
         if (speed <= 0) { splineAnimate.Pause(); return; }
@@ -194,7 +198,7 @@ public class CarScript : MonoBehaviour
                                             -1,
                                             UnityEngine.Random.Range(-0.15f, 0.15f));
 
-        other.gameObject.GetComponent<Rigidbody>().AddExplosionForce(10000f, randomForce, 10f);
+        //other.gameObject.GetComponent<Rigidbody>().AddExplosionForce(10000f, randomForce, 10f);
 
         GetHit(other);
     }

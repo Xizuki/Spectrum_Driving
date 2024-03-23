@@ -65,7 +65,7 @@ Camera:
     width: 1
     height: 1
   near clip plane: 0.3
-  far clip plane: 55
+  far clip plane: 150
   field of view: 90
   orthographic: 0
   orthographic size: 5
@@ -405,6 +405,7 @@ MonoBehaviour:
   bopAmount: 0.5
   bopSpeed: 10
   bopYOffset: 0.75
+  rotateAxis: {x: 0, y: 0, z: 0}
 --- !u!114 &357612550185650708
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -644,10 +645,13 @@ MonoBehaviour:
     - {fileID: 5516276269346316774}
     - {fileID: 5516132137555523150}
     - {fileID: 5516134209216928620}
+  wheelsRotateAxis: []
   transitionTime: 3
   maskQuad: {fileID: 7352095788816028413}
   maskQuadEndPos: {fileID: 7277913980597942430}
   carUpgradeVFX: {fileID: 6408565841806337878}
+  debugText1: {fileID: 0}
+  debugText2: {fileID: 0}
 --- !u!82 &5581324823695144120
 AudioSource:
   m_ObjectHideFlags: 0

@@ -402,6 +402,7 @@ public class MapManager : MonoBehaviour
         //GenerateRain();
 
 
+        //GameManager.instance.RemoveObstaclesNearPlayer();
 
 
 
@@ -2252,7 +2253,7 @@ public class MapManager : MonoBehaviour
                     {
                         //print("Plant GRASS");
                         map[x, y] = (int)(floraTerrainDetailPrefabs[(i)].maxAmount * noiseValue);
-                        map[x, y] = 50;
+                        //map[x, y] = 50;
 
                     }
 

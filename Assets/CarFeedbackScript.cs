@@ -111,8 +111,9 @@ public class CarFeedbackScript : MonoBehaviour
 
     public void Music(float eegValue)
     {
-        musicSource.volume = musicBaseValue + ((1 - musicBaseValue)* eegValue);
-        soundSource.volume = musicBaseValue + ((1 - musicBaseValue) * eegValue);
+        print("Music");
+        musicSource.volume = musicBaseValue + ((1 - musicBaseValue)* eegValue) * OptionsManager.instance.musicVolume;
+        soundSource.volume = musicBaseValue + ((1 - musicBaseValue) * eegValue) * OptionsManager.instance.soundVolume;
     }
 
     public void SmokeVFX(float eegRate)
