@@ -79,6 +79,9 @@ public class CarScript : MonoBehaviour
     {
         if (GameManager.instance.isPaused) eegRate =0;
 
+        if (!GameManager.instance.isPaused)
+            GracePeriodTimer += Time.deltaTime;
+
         if (splineAnimate.NormalizedTime >= 0.998 && GameManager.instance.state == GameState.Playing)
         {
 
@@ -188,9 +191,15 @@ public class CarScript : MonoBehaviour
     public float tiltT;
 
 
+
+    public float GracePeriodTime;
+    public float GracePeriodTimer;
+
     public void OnTriggerEnter(Collider other)
     {
         if (other.tag != "Obstacle") return;
+
+        if(GracePeriodTimer < GracePeriodTime) { return; }
 
         //print("TRIGGER ENTER Obstacle");
 

@@ -291,11 +291,11 @@ public class MapManager : MonoBehaviour
     {
         if (frameCounter == 0)
         {
-            GameManager.instance.RemoveObstaclesNearPlayer();
+            //GameManager.instance.RemoveObstaclesNearPlayer();
 
             roadSplineContainer.gameObject.GetComponent<SplineInstantiate>().Randomize();
             ObstacleManager.instance.splineInstantiate.Randomize();
-            GameManager.instance.RemoveObstaclesNearPlayer();
+            //GameManager.instance.RemoveObstaclesNearPlayer();
 
         }
         if (frameCounter == 1)
