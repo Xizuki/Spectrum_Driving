@@ -38,7 +38,7 @@ public class OptionsManager : MonoBehaviour
         soundVolume = PlayerPrefs.GetFloat("Sound", 0.5f);
         musicVolume = PlayerPrefs.GetFloat("Music", 0.5f);
         difficulty = PlayerPrefs.GetInt("Difficulty", 1);
-
+        prevDifficulty = PlayerPrefs.GetInt("Difficulty", 1);
 
         graphicsSlider.value = currentGraphics;
         soundSlider.value = soundVolume;
