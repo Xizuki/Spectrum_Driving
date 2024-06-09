@@ -89,7 +89,7 @@ public class CarScript : MonoBehaviour
         if (!GameManager.instance.isPaused)
             GracePeriodTimer += Time.deltaTime;
 
-        if (splineAnimate.NormalizedTime >= 0.996 && GameManager.instance.state == GameState.Playing)
+        if (splineAnimate.NormalizedTime >= 0.998 && GameManager.instance.state == GameState.Playing)
         {
 
             StartCoroutine( GameManager.instance.LoadNewWorld());
