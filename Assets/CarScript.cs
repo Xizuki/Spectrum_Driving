@@ -75,16 +75,9 @@ public class CarScript : MonoBehaviour
     }
 
     // Update is called once per frame
-    void FixedUpdate()
+    void Update()
     {
-        if (!GameManager.instance.isPaused)
-        {
-            AutoMove();
-        }
-        else
-        {
-            splineAnimate.Pause();
-        }
+        if (GameManager.instance.isPaused) eegRate =0;
 
         if (!GameManager.instance.isPaused)
             GracePeriodTimer += Time.deltaTime;
@@ -120,14 +113,17 @@ public class CarScript : MonoBehaviour
         //carFeedbackScript.CarTrackVFX(eegRate);
         //carFeedbackScript.SpeedLinesVFX(eegRate);
 
+        UIManager.Instance.UpdateProgressionUI(splineAnimate.NormalizedTime);
 
         float lerpTValue = (tiltT + 1) / 2;
         carParent.localEulerAngles = Vector3.Lerp(new Vector3(0, -tiltAngleLimit, 0), new Vector3(0, tiltAngleLimit, 0), lerpTValue);
     }
 
-    public void LateUpdate()
+    private void FixedUpdate()
     {
-        UIManager.Instance.UpdateProgressionUI(splineAnimate.NormalizedTime);
+        if (GameManager.instance.isPaused) eegRate = 0;
+
+        AutoMove();
     }
 
     public void AutoMove()
